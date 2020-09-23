@@ -1,0 +1,81 @@
+{
+ "creation": "2020-09-23 02:48:43.335731",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "storage_item_group",
+  "misc_services_item_group",
+  "3pl_cb_1",
+  "container_item_group",
+  "receiving_carton_item"
+ ],
+ "fields": [
+  {
+   "fieldname": "storage_item_group",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Storage Item Group",
+   "options": "Item Group",
+   "reqd": 1
+  },
+  {
+   "fieldname": "misc_services_item_group",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Miscellaneous Services Item Group",
+   "options": "Item Group",
+   "reqd": 1
+  },
+  {
+   "fieldname": "3pl_cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "container_item_group",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Container Item Group",
+   "options": "Item Group",
+   "reqd": 1
+  },
+  {
+   "fieldname": "receiving_carton_item",
+   "fieldtype": "Link",
+   "label": "Receiving Carton Item",
+   "options": "Item",
+   "reqd": 1
+  }
+ ],
+ "issingle": 1,
+ "modified": "2020-09-23 04:07:56.710785",
+ "modified_by": "Administrator",
+ "module": "Third Party Logistics",
+ "name": "Third Party Logistics Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Item Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
