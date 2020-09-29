@@ -5,21 +5,28 @@
  "engine": "InnoDB",
  "field_order": [
   "storage_item_group",
+  "receiving_pallet_item",
   "misc_services_item_group",
   "3pl_cb_1",
   "container_item_group",
-  "receiving_carton_item"
+  "receiving_carton_item",
+  "daily_storage_per_cubic_feet_charge",
+  "monthly_storage_per_cubic_feet",
+  "long_term_fees_for_daily_cycle",
+  "long_term_storage_fees_for_monthly_cycle"
  ],
  "fields": [
   {
+   "description": "to filter items in Item doctype to capture the storage charge for the item",
    "fieldname": "storage_item_group",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Storage Item Group",
+   "label": "Item Group for Storage Charge",
    "options": "Item Group",
    "reqd": 1
   },
   {
+   "description": "not sure now, but seems would require",
    "fieldname": "misc_services_item_group",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -32,6 +39,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "description": "to filter items in Stock Entry while capturing receiving information",
    "fieldname": "container_item_group",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -40,15 +48,52 @@
    "reqd": 1
   },
   {
+   "description": "to identify loose cartons item in Stock Entry, for the receiving charge calculation ",
    "fieldname": "receiving_carton_item",
    "fieldtype": "Link",
-   "label": "Receiving Carton Item",
+   "label": "Carton Receiving Item for charge",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "description": "to identify the charges for receiving palletised trucks",
+   "fieldname": "receiving_pallet_item",
+   "fieldtype": "Link",
+   "label": "Pallet Receiving Item for charge",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "monthly_storage_per_cubic_feet",
+   "fieldtype": "Link",
+   "label": "Monthly Storage Charge Per Cubic Feet",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "daily_storage_per_cubic_feet_charge",
+   "fieldtype": "Link",
+   "label": "Daily Storage Per Cubic Feet Charge",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "long_term_fees_for_daily_cycle",
+   "fieldtype": "Link",
+   "label": "Long Term Fees for Daily Cycle",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "long_term_storage_fees_for_monthly_cycle",
+   "fieldtype": "Link",
+   "label": "Long Term Storage Fees for Monthly Cycle",
    "options": "Item",
    "reqd": 1
   }
  ],
  "issingle": 1,
- "modified": "2020-09-23 04:07:56.710785",
+ "modified": "2020-09-28 22:19:37.803514",
  "modified_by": "Administrator",
  "module": "Third Party Logistics",
  "name": "Third Party Logistics Settings",
