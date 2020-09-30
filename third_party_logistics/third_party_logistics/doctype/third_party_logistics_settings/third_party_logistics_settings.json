@@ -4,16 +4,20 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "storage_item_group",
-  "receiving_pallet_item",
-  "misc_services_item_group",
+  "storage_charge_based_on",
+  "default_daily_storage_per_cubic_feet_charge",
+  "default_monthly_storage_per_cubic_feet",
   "3pl_cb_1",
-  "container_item_group",
+  "default_long_term_fees_for_daily_cycle",
+  "default_long_term_storage_fees_for_monthly_cycle",
+  "receiving_defaults_section",
+  "receiving_pallet_item",
+  "rd_cb_1",
   "receiving_carton_item",
-  "daily_storage_per_cubic_feet_charge",
-  "monthly_storage_per_cubic_feet",
-  "long_term_fees_for_daily_cycle",
-  "long_term_storage_fees_for_monthly_cycle"
+  "container_item_group",
+  "other_defaults_section",
+  "storage_item_group",
+  "misc_services_item_group"
  ],
  "fields": [
   {
@@ -64,36 +68,64 @@
    "reqd": 1
   },
   {
-   "fieldname": "monthly_storage_per_cubic_feet",
+   "default": "Item Volume",
+   "fieldname": "storage_charge_based_on",
+   "fieldtype": "Select",
+   "label": "Storage Charge Based On",
+   "options": "Item Volume\nStorage Area",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.storage_charge_based_on == 'Item Volume'",
+   "description": "daily or monthly cycle will be defined at customer level",
+   "fieldname": "default_daily_storage_per_cubic_feet_charge",
    "fieldtype": "Link",
-   "label": "Monthly Storage Charge Per Cubic Feet",
+   "label": "Default Daily Storage Per Cubic Feet Charge",
    "options": "Item",
    "reqd": 1
   },
   {
-   "fieldname": "daily_storage_per_cubic_feet_charge",
+   "depends_on": "eval:doc.storage_charge_based_on == 'Item Volume'",
+   "description": "daily or monthly cycle will be defined at customer level",
+   "fieldname": "default_monthly_storage_per_cubic_feet",
    "fieldtype": "Link",
-   "label": "Daily Storage Per Cubic Feet Charge",
+   "label": "Default Monthly Storage Charge Per Cubic Feet",
    "options": "Item",
    "reqd": 1
   },
   {
-   "fieldname": "long_term_fees_for_daily_cycle",
+   "description": "daily or monthly cycle will be defined at customer level",
+   "fieldname": "default_long_term_fees_for_daily_cycle",
    "fieldtype": "Link",
-   "label": "Long Term Fees for Daily Cycle",
+   "label": "Default Long Term Fees for Daily Cycle",
    "options": "Item",
    "reqd": 1
   },
   {
-   "fieldname": "long_term_storage_fees_for_monthly_cycle",
+   "description": "daily or monthly cycle will be defined at customer level",
+   "fieldname": "default_long_term_storage_fees_for_monthly_cycle",
    "fieldtype": "Link",
-   "label": "Long Term Storage Fees for Monthly Cycle",
+   "label": "Default Long Term Storage Fees for Monthly Cycle",
    "options": "Item",
    "reqd": 1
+  },
+  {
+   "fieldname": "receiving_defaults_section",
+   "fieldtype": "Section Break",
+   "label": "Receiving Defaults"
+  },
+  {
+   "fieldname": "rd_cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "other_defaults_section",
+   "fieldtype": "Section Break",
+   "label": "Other Defaults"
   }
  ],
  "issingle": 1,
- "modified": "2020-09-28 22:19:37.803514",
+ "modified": "2020-09-29 23:51:26.591859",
  "modified_by": "Administrator",
  "module": "Third Party Logistics",
  "name": "Third Party Logistics Settings",

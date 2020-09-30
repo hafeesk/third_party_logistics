@@ -1,0 +1,60 @@
+{
+ "creation": "2020-09-30 03:20:29.246089",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item",
+  "for_item",
+  "si_cb_1",
+  "qty",
+  "stock_uom"
+ ],
+ "fields": [
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Service",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "for_item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "For Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "si_cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Qty",
+   "reqd": 1
+  },
+  {
+   "fieldname": "stock_uom",
+   "fieldtype": "Link",
+   "label": "Stock UOM",
+   "options": "UOM",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "modified": "2020-09-30 03:29:14.520169",
+ "modified_by": "Administrator",
+ "module": "Third Party Logistics",
+ "name": "Service Note Item CT",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
