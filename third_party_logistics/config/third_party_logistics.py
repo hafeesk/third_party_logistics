@@ -37,14 +37,24 @@ def get_data():
         'description': 'Customer'
         },{
         'type': 'doctype',
+        'name': 'Item',
+        'label': 'Item',
+        'description': 'Item'
+        },{
+        'type': 'doctype',
+        'name': 'Item Group',
+        'label': 'Item Group',
+        'description': 'Item Group'
+        },{
+        'type': 'doctype',
         'name': 'Third Party Logistics Settings',
         'label': 'Third Party Logistics Settings',
         'description': 'Third Party Logistics Settings'
         },{
         'type': 'doctype',
         'name': 'Storage Charge Log CT',
-        'label': 'Storage Charge Log CT',
-        'description': 'Storage Charge Log CT'
+        'label': 'Storage Charge Log',
+        'description': 'Storage Charge Log'
         }]},{'label': _('Reports'), 'items': [{
         'type': 'report',
         'name': 'Storage Billing Report',
