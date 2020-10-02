@@ -15,9 +15,14 @@
   "rd_cb_1",
   "receiving_carton_item",
   "container_item_group",
+  "shipstation_sb",
+  "shipstation_shipment_charge",
+  "ship_sb_cb1",
+  "ship_station_acc_3pl",
   "other_defaults_section",
   "storage_item_group",
-  "misc_services_item_group"
+  "misc_services_item_group",
+  "setup_instructions"
  ],
  "fields": [
   {
@@ -122,10 +127,38 @@
    "fieldname": "other_defaults_section",
    "fieldtype": "Section Break",
    "label": "Other Defaults"
+  },
+  {
+   "fieldname": "setup_instructions",
+   "fieldtype": "Text Editor",
+   "label": "Setup Instructions"
+  },
+  {
+   "fieldname": "shipstation_sb",
+   "fieldtype": "Section Break",
+   "label": "ShipStation "
+  },
+  {
+   "fieldname": "shipstation_shipment_charge",
+   "fieldtype": "Link",
+   "label": "ShipStation Shipment Charge",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "ship_sb_cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ship_station_acc_3pl",
+   "fieldtype": "Link",
+   "label": "ShipStation Account of 3PL",
+   "options": "ShipStation Integration Settings",
+   "reqd": 1
   }
  ],
  "issingle": 1,
- "modified": "2020-09-29 23:51:26.591859",
+ "modified": "2020-10-02 04:39:51.238600",
  "modified_by": "Administrator",
  "module": "Third Party Logistics",
  "name": "Third Party Logistics Settings",

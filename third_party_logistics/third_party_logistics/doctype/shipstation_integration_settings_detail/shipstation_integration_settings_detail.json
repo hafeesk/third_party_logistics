@@ -1,0 +1,77 @@
+{
+ "creation": "2020-10-02 04:09:38.555725",
+ "description": "warehouse can be fetched from Item Defaults",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "store_id",
+  "store_name",
+  "fetch_frequency",
+  "ssd_cb_1",
+  "customer",
+  "disable",
+  "default_tax_account",
+  "default_shipping_account"
+ ],
+ "fields": [
+  {
+   "fieldname": "store_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Store ID"
+  },
+  {
+   "fieldname": "store_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Store Name"
+  },
+  {
+   "fieldname": "fetch_frequency",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Fetch Frequency",
+   "options": "Never\nHourly\n30 Minutes\n6 Minutes"
+  },
+  {
+   "fieldname": "ssd_cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "disable",
+   "fieldtype": "Check",
+   "label": "Disable"
+  },
+  {
+   "fieldname": "default_tax_account",
+   "fieldtype": "Link",
+   "label": "Default Tax Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "default_shipping_account",
+   "fieldtype": "Link",
+   "label": "Default Shipping Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer",
+   "options": "Customer"
+  }
+ ],
+ "istable": 1,
+ "modified": "2020-10-02 04:25:23.890376",
+ "modified_by": "Administrator",
+ "module": "Third Party Logistics",
+ "name": "ShipStation Integration Settings Detail",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

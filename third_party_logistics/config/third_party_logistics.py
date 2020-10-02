@@ -52,13 +52,19 @@ def get_data():
         'description': 'Third Party Logistics Settings'
         },{
         'type': 'doctype',
+        'name': 'ShipStation Integration Settings',
+        'label': 'ShipStation Integration Settings',
+        'description': 'ShipStation Integration Settings'
+        },
+        {
+        'type': 'doctype',
         'name': 'Storage Charge Log CT',
         'label': 'Storage Charge Log',
         'description': 'Storage Charge Log'
         }]},{'label': _('Reports'), 'items': [{
         'type': 'report',
-        'name': 'Storage Billing Report',
-        'label': 'Storage Billing Report',
+        'name': 'Storage Billing Details',
+        'label': 'Storage Billing Details',
 	    "is_query_report": True,
 	    'doctype':'Storage Charge Log CT',
         'description': 'Storage Charge Log CT'

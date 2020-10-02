@@ -1,0 +1,142 @@
+{
+ "creation": "2020-10-02 04:23:23.940076",
+ "description": "Other defaults can be set at Item and Customer level",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "shipstation_account_owned_by",
+  "customer",
+  "api_key",
+  "api_secret",
+  "column_break_3",
+  "disable",
+  "fetch_carrier_service_package",
+  "get_item",
+  "get_orders",
+  "section_break_10",
+  "shipstation_integration_settings_detail",
+  "carriers_section",
+  "carrier_data"
+ ],
+ "fields": [
+  {
+   "fieldname": "shipstation_account_owned_by",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "ShipStation Account owned by",
+   "options": "Customer\n3PL",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.shipstation_account_owned_by =='Customer'",
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fetch_carrier_service_package",
+   "fieldtype": "Button",
+   "label": "Fetch Carrier Service Package"
+  },
+  {
+   "fieldname": "get_item",
+   "fieldtype": "Button",
+   "label": "Get Item"
+  },
+  {
+   "fieldname": "get_orders",
+   "fieldtype": "Button",
+   "label": "Get Orders"
+  },
+  {
+   "fieldname": "api_key",
+   "fieldtype": "Password",
+   "label": "API Key",
+   "reqd": 1
+  },
+  {
+   "fieldname": "api_secret",
+   "fieldtype": "Password",
+   "label": "API Secret",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_10",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "shipstation_integration_settings_detail",
+   "fieldtype": "Table",
+   "label": "ShipStation Integration Settings Detail",
+   "options": "ShipStation Integration Settings Detail"
+  },
+  {
+   "fieldname": "carriers_section",
+   "fieldtype": "Section Break",
+   "label": "Carriers"
+  },
+  {
+   "fieldname": "carrier_data",
+   "fieldtype": "HTML"
+  },
+  {
+   "default": "0",
+   "fieldname": "disable",
+   "fieldtype": "Check",
+   "label": "Disable"
+  }
+ ],
+ "modified": "2020-10-02 04:48:53.280600",
+ "modified_by": "Administrator",
+ "module": "Third Party Logistics",
+ "name": "ShipStation Integration Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Stock Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
