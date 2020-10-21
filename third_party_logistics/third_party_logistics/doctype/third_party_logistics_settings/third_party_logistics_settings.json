@@ -12,6 +12,7 @@
   "default_long_term_storage_fees_for_monthly_cycle",
   "receiving_defaults_section",
   "receiving_pallet_item",
+  "loading_pallet_item",
   "rd_cb_1",
   "receiving_carton_item",
   "container_item_group",
@@ -117,7 +118,7 @@
   {
    "fieldname": "receiving_defaults_section",
    "fieldtype": "Section Break",
-   "label": "Receiving Defaults"
+   "label": "Receiving & Sending Defaults"
   },
   {
    "fieldname": "rd_cb_1",
@@ -155,10 +156,18 @@
    "label": "ShipStation Account of 3PL",
    "options": "ShipStation Integration Settings",
    "reqd": 1
+  },
+  {
+   "description": "For outbound via LTL ",
+   "fieldname": "loading_pallet_item",
+   "fieldtype": "Link",
+   "label": "Pallet Loading Item",
+   "options": "Item",
+   "reqd": 1
   }
  ],
  "issingle": 1,
- "modified": "2020-10-02 04:39:51.238600",
+ "modified": "2020-10-21 05:48:04.436284",
  "modified_by": "Administrator",
  "module": "Third Party Logistics",
  "name": "Third Party Logistics Settings",
