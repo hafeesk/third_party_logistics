@@ -7,13 +7,13 @@
  "field_order": [
   "naming_series",
   "customer",
+  "status",
   "for_sales_order",
   "remarks",
   "column_break_4",
+  "company",
   "posting_date",
   "posting_time",
-  "company",
-  "status",
   "section_break_9",
   "items",
   "amended_from"
@@ -108,7 +108,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2020-09-30 03:32:11.050933",
+ "modified": "2020-10-26 20:30:19.299767",
  "modified_by": "Administrator",
  "module": "Third Party Logistics",
  "name": "Service Note CT",

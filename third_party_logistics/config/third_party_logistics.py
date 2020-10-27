@@ -30,12 +30,8 @@ def get_data():
         'name': 'Sales Invoice',
         'label': 'Sales Invoice',
         'description': 'Sales Invoice'
-        }]},{'label': _('Setup'), 'items': [{
-        'type': 'doctype',
-        'name': 'Customer',
-        'label': 'Customer',
-        'description': 'Customer'
-        },{
+        }]},
+        {'label': _('Inventory'), 'items': [{
         'type': 'doctype',
         'name': 'Item',
         'label': 'Item',
@@ -46,6 +42,39 @@ def get_data():
         'label': 'Item Group',
         'description': 'Item Group'
         },{
+        'type': 'doctype',
+        'name': 'Warehouse',
+        'label': 'Warehouse',
+        'description': 'Warehouse'
+        }]},
+        {'label': _('Customer'), 'items': [{
+        'type': 'doctype',
+        'name': 'Customer',
+        'label': 'Customer',
+        'description': 'Customer'
+        },{
+        'type': 'doctype',
+        'name': 'Contract',
+        'label': 'Contract',
+        'description': 'Contract'
+        }]},
+        {'label': _('Reports'), 'items': [{
+        'type': 'report',
+        'name': 'Storage Billing Details',
+        'label': 'Storage Billing Details',
+	    "is_query_report": True,
+	    'doctype':'Storage Charge Log CT',
+        'description': 'Storage Charge Log CT'
+        },{
+        'type': 'report',
+        'name': 'Stock Balance',
+        'label': 'Stock Balance',
+	    "is_query_report": True,
+	    'doctype':'Stock Entry',
+        'description': 'Stock Balance'
+        }]},
+        {'label': _('Setup'), 'items': [
+        {
         'type': 'doctype',
         'name': 'Third Party Logistics Settings',
         'label': 'Third Party Logistics Settings',
@@ -61,13 +90,6 @@ def get_data():
         'name': 'Storage Charge Log CT',
         'label': 'Storage Charge Log',
         'description': 'Storage Charge Log'
-        }]},{'label': _('Reports'), 'items': [{
-        'type': 'report',
-        'name': 'Storage Billing Details',
-        'label': 'Storage Billing Details',
-	    "is_query_report": True,
-	    'doctype':'Storage Charge Log CT',
-        'description': 'Storage Charge Log CT'
         }]}]
 
     return config

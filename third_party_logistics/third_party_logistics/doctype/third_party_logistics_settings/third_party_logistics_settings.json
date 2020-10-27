@@ -36,7 +36,7 @@
    "reqd": 1
   },
   {
-   "description": "not sure now, but seems would require",
+   "description": "to filter items in Service Note Item CT",
    "fieldname": "misc_services_item_group",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -167,7 +167,7 @@
   }
  ],
  "issingle": 1,
- "modified": "2020-10-21 05:48:04.436284",
+ "modified": "2020-10-26 02:59:29.524678",
  "modified_by": "Administrator",
  "module": "Third Party Logistics",
  "name": "Third Party Logistics Settings",
