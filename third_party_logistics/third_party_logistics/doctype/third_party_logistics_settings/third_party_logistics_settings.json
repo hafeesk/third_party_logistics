@@ -12,10 +12,15 @@
   "default_long_term_storage_fees_for_monthly_cycle",
   "receiving_defaults_section",
   "receiving_pallet_item",
+  "outbound_freight_charges",
   "loading_pallet_item",
   "rd_cb_1",
   "receiving_carton_item",
   "container_item_group",
+  "order_fulfilment_defaults_sb_section",
+  "fulfilment_charge_per_order_cf",
+  "or_ful_cb_1",
+  "fulfilment_charge_per_order_item_cf",
   "shipstation_sb",
   "shipstation_shipment_charge",
   "ship_sb_cb1",
@@ -118,7 +123,7 @@
   {
    "fieldname": "receiving_defaults_section",
    "fieldtype": "Section Break",
-   "label": "Receiving & Sending Defaults"
+   "label": "Receiving & Sending Default Items"
   },
   {
    "fieldname": "rd_cb_1",
@@ -164,10 +169,42 @@
    "label": "Pallet Loading Item",
    "options": "Item",
    "reqd": 1
+  },
+  {
+   "description": "pick and pack charges per order and per order item",
+   "fieldname": "order_fulfilment_defaults_sb_section",
+   "fieldtype": "Section Break",
+   "label": "Order Fulfilment Default Items"
+  },
+  {
+   "fieldname": "fulfilment_charge_per_order_cf",
+   "fieldtype": "Link",
+   "label": "Fulfilment Charge Per Order",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "fulfilment_charge_per_order_item_cf",
+   "fieldtype": "Link",
+   "label": "Fulfilment Charge Per Order Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "or_ful_cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "to record the trucking company charge",
+   "fieldname": "outbound_freight_charges",
+   "fieldtype": "Link",
+   "label": "Outbound Freight Charges",
+   "options": "Item",
+   "reqd": 1
   }
  ],
  "issingle": 1,
- "modified": "2020-10-26 02:59:29.524678",
+ "modified": "2020-10-27 23:52:51.682533",
  "modified_by": "Administrator",
  "module": "Third Party Logistics",
  "name": "Third Party Logistics Settings",
