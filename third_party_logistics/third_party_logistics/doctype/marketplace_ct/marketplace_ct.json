@@ -1,0 +1,54 @@
+{
+ "autoname": "field:marketplace",
+ "creation": "2020-11-02 20:21:16.701758",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "marketplace"
+ ],
+ "fields": [
+  {
+   "fieldname": "marketplace",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Marketplace",
+   "reqd": 1,
+   "unique": 1
+  }
+ ],
+ "modified": "2020-11-02 20:21:16.701758",
+ "modified_by": "Administrator",
+ "module": "Third Party Logistics",
+ "name": "Marketplace CT",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Item Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

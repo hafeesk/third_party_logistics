@@ -1,0 +1,38 @@
+{
+ "creation": "2020-11-02 20:23:49.350854",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "marketplace",
+  "external_item_code"
+ ],
+ "fields": [
+  {
+   "fieldname": "marketplace",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Platform/ Marketplace",
+   "options": "Marketplace CT",
+   "reqd": 1
+  },
+  {
+   "fieldname": "external_item_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "External Item Code / Part No",
+   "reqd": 1
+  }
+ ],
+ "istable": 1,
+ "modified": "2020-11-02 21:50:53.371947",
+ "modified_by": "Administrator",
+ "module": "Third Party Logistics",
+ "name": "External Marketplace Item Map CT",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
