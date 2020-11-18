@@ -22,8 +22,6 @@
   "or_ful_cb_1",
   "fulfilment_charge_per_order_item_cf",
   "shipstation_sb",
-  "shipstation_shipment_charge",
-  "ship_sb_cb1",
   "ship_station_acc_3pl",
   "other_defaults_section",
   "storage_item_group",
@@ -145,17 +143,6 @@
    "label": "ShipStation "
   },
   {
-   "fieldname": "shipstation_shipment_charge",
-   "fieldtype": "Link",
-   "label": "ShipStation Shipment Charge",
-   "options": "Item",
-   "reqd": 1
-  },
-  {
-   "fieldname": "ship_sb_cb1",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "ship_station_acc_3pl",
    "fieldtype": "Link",
    "label": "ShipStation Account of 3PL",
@@ -204,7 +191,7 @@
   }
  ],
  "issingle": 1,
- "modified": "2020-10-27 23:52:51.682533",
+ "modified": "2020-11-08 20:53:44.790715",
  "modified_by": "Administrator",
  "module": "Third Party Logistics",
  "name": "Third Party Logistics Settings",

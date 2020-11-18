@@ -7,8 +7,7 @@
  "field_order": [
   "naming_series",
   "customer",
-  "status",
-  "for_sales_order",
+  "invoiced",
   "remarks",
   "column_break_4",
   "company",
@@ -62,16 +61,6 @@
    "reqd": 1
   },
   {
-   "default": "Draft",
-   "fieldname": "status",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Status",
-   "options": "\nDraft\nTo Bill\nBilled\nCancelled",
-   "reqd": 1
-  },
-  {
    "fieldname": "section_break_9",
    "fieldtype": "Section Break"
   },
@@ -93,22 +82,23 @@
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
-   "in_list_view": 1,
    "label": "Series",
    "options": "TPL.SN.-.YY.MM.-.#",
    "reqd": 1
   },
   {
-   "fieldname": "for_sales_order",
-   "fieldtype": "Link",
+   "default": "0",
+   "fieldname": "invoiced",
+   "fieldtype": "Check",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "For Sales Order",
-   "options": "Sales Order"
+   "label": "Invoiced ",
+   "read_only": 1,
+   "reqd": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2020-10-26 20:30:19.299767",
+ "modified": "2020-11-09 03:44:44.354790",
  "modified_by": "Administrator",
  "module": "Third Party Logistics",
  "name": "Service Note CT",

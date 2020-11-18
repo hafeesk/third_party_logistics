@@ -7,9 +7,9 @@
  "field_order": [
   "store_id",
   "store_name",
+  "marketplace",
   "fetch_frequency",
   "ssd_cb_1",
-  "customer",
   "disable",
   "default_tax_account",
   "default_shipping_account"
@@ -17,11 +17,13 @@
  "fields": [
   {
    "fieldname": "store_id",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Store ID"
+   "label": "Store ID",
+   "options": "ShipStation Store"
   },
   {
+   "description": "fetch from shipstation store",
    "fieldname": "store_name",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -57,15 +59,14 @@
    "options": "Account"
   },
   {
-   "fieldname": "customer",
+   "fieldname": "marketplace",
    "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Customer",
-   "options": "Customer"
+   "label": "Marketplace",
+   "options": "Marketplace CT"
   }
  ],
  "istable": 1,
- "modified": "2020-10-02 04:25:23.890376",
+ "modified": "2020-11-08 19:51:01.703187",
  "modified_by": "Administrator",
  "module": "Third Party Logistics",
  "name": "ShipStation Integration Settings Detail",
