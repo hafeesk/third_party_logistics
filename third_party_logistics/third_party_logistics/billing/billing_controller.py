@@ -89,3 +89,21 @@ def make_receiving_charges():
         _create_invoice(items)
 
     frappe.db.commit()
+
+
+@frappe.whitelist()
+def test_make_receiving_charges():
+    make_receiving_charges()
+
+
+@frappe.whitelist()
+def uninvoice_material_receipt():
+    to_date = add_days(get_first_day(getdate()), -1)
+    from_date = get_first_day(to_date)
+    frappe.db.sql("""
+    update `tabStock Entry` set invoiced_cf = 0
+    where stock_entry_type = 'Material Receipt'
+    and invoiced_cf = 1
+    and posting_date between %s and %s
+    """, (from_date, to_date))
+    frappe.db.commit()
