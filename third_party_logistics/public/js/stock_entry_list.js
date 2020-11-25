@@ -1,24 +1,24 @@
 frappe.listview_settings["Stock Entry"] = {
   onload: function (me) {
-    me.page.add_inner_button("Run Receiving Charges", () => {
+    me.page.add_inner_button("Run Billing", () => {
       frappe
         .call({
           method:
-            "third_party_logistics.third_party_logistics.billing.billing_controller.test_make_receiving_charges",
+            "third_party_logistics.third_party_logistics.billing.billing_controller.make_billing",
         })
         .then(() => {
-          frappe.show_alert({ message: "Receiving charges created" });
+          frappe.show_alert({ message: "Billing done" });
         });
     });
 
-    me.page.add_inner_button("Uninvoice Material Receipt", () => {
+    me.page.add_inner_button("Uninvoice", () => {
       frappe
         .call({
           method:
-            "third_party_logistics.third_party_logistics.billing.billing_controller.uninvoice_material_receipt",
+            "third_party_logistics.third_party_logistics.billing.billing_controller.uninvoice_last_month",
         })
         .then(() => {
-          frappe.show_alert({ message: "Material Receipt uninvoiced" });
+          frappe.show_alert({ message: "Uninvoice complete" });
         });
     });
   },

@@ -6,104 +6,245 @@ from __future__ import unicode_literals
 import frappe
 from frappe.utils import getdate, get_first_day, get_last_day, add_days
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
+from collections import defaultdict
+
+def get_filters():
+    to_date = add_days(get_first_day(getdate()), -1)
+    from_date = get_first_day(to_date)
+    # return dict(from_date='2020-09-01', to_date='2020-09-30')
+    return dict(from_date=from_date, to_date=to_date)
+
+def make_storage_charges():
+    """
+    Calculate Storage Charges based on Storage Model : Daily / Monthly for that customer
+    """
+    frappe.db.commit()
+
+def make_lt_storage_charges():
+    """
+    Calculate Long Term Storage Fees , if found
+    """
+    frappe.db.commit()
+
 
 def make_receiving_charges():
     """
     Creates one `Sales Invoice` per customer for receiving charges for all Material Receipt in the previous month.
     Scheduled to run on 1st of month 00:15
     """
-    to_date = add_days(get_first_day(getdate()), -1)
-    from_date = get_first_day(to_date)
-    filters = dict(from_date=from_date, to_date=to_date)
+    filters = get_filters()
 
-    def _create_invoice(items):
-        invoice = frappe.new_doc('Sales Invoice')
-        invoice.set_posting_time = 1
-        invoice.posting_date = getdate()
-        invoice.customer = items[0]["customer_cf"]
-        invoice.company = items[0]["company"]
-        invoice.due_date = add_days(getdate(), 30)
-        receiving_carton_item = frappe.db.get_value("Third Party Logistics Settings", None, "receiving_carton_item")
-        receiving_pallet_item = frappe.db.get_value("Third Party Logistics Settings", None, "receiving_pallet_item")
-
+    def get_invoice_items(customer, company, items):
+        carton_container_charges = get_carton_container_receiving_charge(customer, company, receiving_carton_item)
+        out = defaultdict(float)
         for args in items:
             args = frappe._dict(args)
             if args.received_as_cf == "Loose Cartons":
-                item = invoice.append("items")
-                item.item_code = receiving_carton_item
-                item.qty = args.loose_cartons_qty_cf
-                item.description = "Carton receiving charges. %s" % args.name
-
-                item = invoice.append("items")
-                item.item_code = args.container_type_cf
-                item.qty = 1
-                item.description = "Container type %s minimum receiving charge. %s" % (args.container_type_cf, args.name)
-            elif args.received_as_cf == "Pallet":
-                item = invoice.append("items")
-                item.item_code = receiving_pallet_item
-                item.qty = args.pallet_qty_cf
-                item.description = "Pallet receiving charge. %s" % (args.name)
-
-        # Add dimensions in invoice:
-        accounting_dimensions = get_accounting_dimensions()
-        for dimension in accounting_dimensions:
-            if args.get(dimension):
-                invoice.update({
-                    dimension: args.get(dimension)
-                })
-
-        invoice.set_missing_values(for_validate=True)
-        invoice.save(ignore_permissions=True)
-
-        # remove carton charge lines if amount less then container type minimum
-        lines_to_remove = []
-        for idx, d in enumerate(invoice.items):
-            if d.item_code == receiving_carton_item:
-                if d.amount < invoice.items[idx + 1].amount:
-                    lines_to_remove.append(d.name)
+                if carton_container_charges.get(args.container_type_cf, 0) > (carton_container_charges.get(receiving_carton_item, 0) * args.loose_cartons_qty_cf):
+                    out[args.container_type_cf] += 1
                 else:
-                    lines_to_remove.append(invoice.items[idx + 1].name)
-        invoice.items = [d for d in invoice.items if not d.name in lines_to_remove]
+                    out[receiving_carton_item] += args.loose_cartons_qty_cf
+            elif args.received_as_cf == "Pallet":
+                out[receiving_pallet_item] += args.pallet_qty_cf
 
-        invoice.save(ignore_permissions=True)
-        invoice.submit()
+        return out
 
-    invoices = {}
+    receiving_carton_item = frappe.db.get_value("Third Party Logistics Settings", None, "receiving_carton_item")
+    receiving_pallet_item = frappe.db.get_value("Third Party Logistics Settings", None, "receiving_pallet_item")
+
+    invoices = defaultdict(list)
     for d in frappe.db.sql("""
-    select 
-        name, company, customer, invoiced_cf, received_as_cf, container_type_cf, 
-        pallet_qty_cf, loose_cartons_qty_cf, customer_cf, freight_charges_cf, 
-        tracking_number_cf, pallet_outbound_qty_cf, each_pallet_qty_cf, outbound_freight_charge_cf
-    from 
+    select
+        company, customer_cf customer, received_as_cf, container_type_cf,
+        pallet_qty_cf, loose_cartons_qty_cf
+    from
         `tabStock Entry` ste
-    where 
+    where
         stock_entry_type = 'Material Receipt'
         and invoiced_cf = 0
         and ste.posting_date between %(from_date)s and %(to_date)s
-    """, filters, as_dict=True):
-        invoice = invoices.setdefault((d["customer"], d["company"]), [])
-        invoice.append(d)
-        frappe.db.set_value("Stock Entry", d.name, "invoiced_cf", 1)
+        and customer_cf is not null
+    """, filters, as_dict=True, debug=False):
+        invoices[(d["customer"], d["company"])].append(d)
 
-    for _, items in invoices.items():
-        _create_invoice(items)
+    out = {}
+    for key, items in invoices.items():
+        out[key] = get_invoice_items(key[0], key[1], items)
+    return out
+
+
+def make_order_fulfillment_charges():
+    """
+    Calculate Per Order Charges based on No Of Orders (SO) and Item Qty
+    Calculate Pick and Pack Charges based on No Of Items ( Total Item Qty in each Order)
+    """
+    filters = get_filters()
+    fulfilment_charge_per_order = frappe.db.get_value("Third Party Logistics Settings", None, "fulfilment_charge_per_order_cf")
+    fulfilment_charge_per_order_item_cf = frappe.db.get_value("Third Party Logistics Settings", None, "fulfilment_charge_per_order_item_cf")
+
+    invoices = defaultdict(list)
+
+    per_order_order_item_charges = frappe.db.sql("""
+    select
+        so.customer, so.company,
+        count(distinct so.name) so_count,
+        sum(case when it.pick_and_pack_charge_cf is null then soi.qty else 0 end) so_item_qty
+    from
+        `tabSales Order` so
+        inner join `tabSales Order Item` soi on soi.parent = so.name
+        inner join tabItem it on it.name = soi.item_code
+    where
+        so.docstatus = 1
+        and so.invoiced_cf = 0
+        and so.transaction_date between %(from_date)s and %(to_date)s
+    group by
+        so.customer, so.company
+    """, filters, as_dict=True)
+
+    for d in per_order_order_item_charges:
+        invoices[(d['customer'], d['company'])].extend([
+            {"item": fulfilment_charge_per_order, "qty": d["so_count"]},
+            {"item": fulfilment_charge_per_order_item_cf, "qty": d["so_item_qty"]},
+        ])
+
+    per_order_order_item_charges_item_specific = frappe.db.sql("""
+    select
+        so.customer, so.company,
+        it.pick_and_pack_charge_cf item, sum(soi.qty) so_item_qty
+    from
+        `tabSales Order` so
+        inner join `tabSales Order Item` soi on soi.parent = so.name
+        inner join tabItem it on it.name = soi.item_code and it.pick_and_pack_charge_cf is not null
+    where
+        so.docstatus = 1
+        and so.invoiced_cf = 0
+        and so.transaction_date between %(from_date)s and %(to_date)s
+    group by
+        so.customer, so.company, it.pick_and_pack_charge_cf
+    """, filters, as_dict=True)
+
+    for d in per_order_order_item_charges_item_specific:
+        invoices[(d["customer"], d["company"])].append({"item": d["item"], "qty": d["so_item_qty"]})
+
+    out = defaultdict()
+    for key, items in invoices.items():
+        lines = defaultdict(float)
+        for d in items:
+            lines[d["item"]] += d["qty"]
+        out[key] = lines
+    return out
+
+def make_freight_forward_charges_for_bulk_outward_shipment():
+    """
+        Calculate Freight Forward Charges for Bulk Outbound Shipment - Stock Entry (Material Issued)
+    """
+    frappe.db.commit()
+
+def make_warehouse_service_charges_for_service_notes():
+    """
+    Other Miscellaneous Warehouse Services provided , to be picked from Service Notes
+    """
+    frappe.db.commit()
+
+@frappe.whitelist()
+def make_billing():
+    def make_invoice(key):
+        invoice = frappe.new_doc('Sales Invoice')
+        invoice.set_posting_time = 1
+        invoice.posting_date = getdate()
+        invoice.customer = key[0]
+        invoice.company = key[1]
+        invoice.due_date = add_days(getdate(), 30)
+        return invoice
+
+    invoices = defaultdict(list)
+    # collect all charges
+    receiving_charges = make_receiving_charges()
+    order_fulfillment_charges = make_order_fulfillment_charges()
+
+    for charges in [receiving_charges, order_fulfillment_charges]:
+        for key, items_dd in charges.items():
+            invoices[key].append(items_dd)
+
+    for key, items in invoices.items():
+        invoice = make_invoice(key)
+        for dd in items:
+            for item, qty in dd.items():
+                if qty > 0:
+                    invoice_item = invoice.append("items")
+                    invoice_item.item_code = item
+                    invoice_item.qty = qty
+        invoice.set_missing_values(for_validate=True)
+        invoice.save(ignore_permissions=True)
+
+    update_invoiced_cf()
 
     frappe.db.commit()
 
-
-@frappe.whitelist()
-def test_make_receiving_charges():
-    make_receiving_charges()
-
-
-@frappe.whitelist()
-def uninvoice_material_receipt():
-    to_date = add_days(get_first_day(getdate()), -1)
-    from_date = get_first_day(to_date)
+def update_invoiced_cf():
+    filters = get_filters()
     frappe.db.sql("""
-    update `tabStock Entry` set invoiced_cf = 0
-    where stock_entry_type = 'Material Receipt'
-    and invoiced_cf = 1
-    and posting_date between %s and %s
-    """, (from_date, to_date))
+    update 
+        `tabStock Entry` set invoiced_cf = 1
+    where
+        stock_entry_type = 'Material Receipt'
+        and invoiced_cf = 0
+        and posting_date between %(from_date)s and %(to_date)s
+        and customer_cf is not null
+    """, filters)
+
+    frappe.db.sql("""
+    update 
+        `tabSales Order` set invoiced_cf = 1
+    where
+        docstatus = 1
+        and invoiced_cf = 0
+        and transaction_date between %(from_date)s and %(to_date)s
+    """, filters)
+
+
+def get_carton_container_receiving_charge(customer, company, receiving_carton_item):
+    invoice = frappe.new_doc('Sales Invoice')
+    invoice.posting_date = getdate()
+    invoice.customer = customer
+    invoice.company = company
+    invoice.due_date = add_days(getdate(), 30)
+    items = [d[0] for d in frappe.db.get_list("Item", {"item_group": "Container"}, as_list=1)]
+    items.append(receiving_carton_item)
+    for d in items:
+        i = invoice.append("items")
+        i.item_code = d
+        i.qty = 1
+    invoice.insert()
+    rates = {a: b for a, b in [(d.item_code, d.rate) for d in invoice.items]}
+    invoice.delete()
+    return rates
+
+
+@frappe.whitelist()
+def uninvoice_last_month():
+    '''
+    Set invoiced_cf to 0, for use in testing
+    to recreate billing
+    '''
+
+    filters = get_filters()
+    frappe.db.sql("""
+    update 
+        `tabStock Entry` set invoiced_cf = 0
+    where
+        stock_entry_type = 'Material Receipt'
+        and invoiced_cf = 1
+        and posting_date between %(from_date)s and %(to_date)s
+        and customer_cf is not null
+    """, filters)
+
+    frappe.db.sql("""
+    update 
+        `tabSales Order` set invoiced_cf = 0
+    where
+        docstatus = 1
+        and invoiced_cf = 1
+        and transaction_date between %(from_date)s and %(to_date)s
+    """, filters)
     frappe.db.commit()
