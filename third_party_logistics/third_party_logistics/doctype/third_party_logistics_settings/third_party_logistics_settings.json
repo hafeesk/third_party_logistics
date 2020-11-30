@@ -23,6 +23,12 @@
   "fulfilment_charge_per_order_item_cf",
   "shipstation_sb",
   "ship_station_acc_3pl",
+  "billing_sb",
+  "from_date",
+  "to_date",
+  "bil_cb_1",
+  "prepare_invoice",
+  "un_invoice",
   "other_defaults_section",
   "storage_item_group",
   "misc_services_item_group",
@@ -188,10 +194,39 @@
    "label": "Outbound Freight Charges",
    "options": "Item",
    "reqd": 1
+  },
+  {
+   "fieldname": "billing_sb",
+   "fieldtype": "Section Break",
+   "label": "Billing"
+  },
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date"
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date"
+  },
+  {
+   "fieldname": "bil_cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "prepare_invoice",
+   "fieldtype": "Button",
+   "label": "Prepare Invoice"
+  },
+  {
+   "fieldname": "un_invoice",
+   "fieldtype": "Button",
+   "label": "Un Invoice"
   }
  ],
  "issingle": 1,
- "modified": "2020-11-08 20:53:44.790715",
+ "modified": "2020-11-30 06:09:49.346386",
  "modified_by": "Administrator",
  "module": "Third Party Logistics",
  "name": "Third Party Logistics Settings",
