@@ -9,12 +9,12 @@ from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import g
 from collections import defaultdict
 import json
 from frappe.utils.pdf import get_pdf
+from frappe.utils.file_manager import save_file
 
 
 def get_filters():
     to_date = add_days(get_first_day(getdate()), -1)
     from_date = get_first_day(to_date)
-    # return dict(from_date='2020-09-01', to_date='2020-09-30')
     return dict(from_date=from_date, to_date=to_date)
 
 def make_storage_charges():
@@ -172,6 +172,11 @@ def make_billing(from_date=None, to_date=None):
 
         return invoice
 
+    if not from_date or not to_date:
+        filters = get_filters()
+        from_date = filters.get("from_date")
+        to_date = filters.get("to_date")
+
     invoices = defaultdict(list)
     # collect all charges
     receiving_charges = make_receiving_charges(from_date=from_date, to_date=to_date)
@@ -191,6 +196,9 @@ def make_billing(from_date=None, to_date=None):
                     invoice_item.qty = qty
         invoice.set_missing_values(for_validate=True)
         invoice.save(ignore_permissions=True)
+        filters = dict(from_date=from_date, to_date=to_date, customer=invoice.customer, company=invoice.company)
+        fname, fcontent = get_billing_report(filters)
+        save_file(fname, fcontent, "Sales Invoice", invoice.name, is_private=1)
 
     update_invoiced_cf()
 
@@ -263,10 +271,7 @@ def uninvoice(from_date, to_date):
     """, filters)
     frappe.db.commit()
 
-@frappe.whitelist()
-def print_billing_summary(filters):
-    filters = json.loads(frappe.local.form_dict.filters)
-
+def get_billing_report(filters):
     from third_party_logistics.third_party_logistics.report.billing_summary_tpl.billing_summary_tpl import get_data
     receiving_charges = get_data(filters)
     context = dict(filters=filters, receiving_charges=receiving_charges)
@@ -280,6 +285,13 @@ def print_billing_summary(filters):
         "margin-bottom": "40mm",
         "orientation": "Landscape"
     }
-    frappe.local.response.filecontent = get_pdf(html, options=options)
+    fname = "{customer}_Billing_Summary_{from_date}_to_{to_date}.pdf".format(**filters)
+    return fname, get_pdf(html, options=options)
+
+@frappe.whitelist()
+def print_billing_summary(filters):
+    filters = json.loads(frappe.local.form_dict.filters)
+    fname, content = get_billing_report(filters)
+    frappe.local.response.filecontent = content
     frappe.local.response.type = 'download'
-    frappe.local.response.filename = 'Billing Summary.pdf'
+    frappe.local.response.filename = fname
