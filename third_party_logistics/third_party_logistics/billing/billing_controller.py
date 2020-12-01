@@ -7,6 +7,9 @@ import frappe
 from frappe.utils import getdate, get_first_day, get_last_day, add_days
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
 from collections import defaultdict
+import json
+from frappe.utils.pdf import get_pdf
+
 
 def get_filters():
     to_date = add_days(get_first_day(getdate()), -1)
@@ -27,12 +30,16 @@ def make_lt_storage_charges():
     frappe.db.commit()
 
 
-def make_receiving_charges():
+def make_receiving_charges(from_date=None, to_date=None):
     """
     Creates one `Sales Invoice` per customer for receiving charges for all Material Receipt in the previous month.
     Scheduled to run on 1st of month 00:15
     """
     filters = get_filters()
+    if from_date:
+        filters["from_date"] = from_date
+    if to_date:
+        filters["to_date"] = to_date
 
     def get_invoice_items(customer, company, items):
         carton_container_charges = get_carton_container_receiving_charge(customer, company, receiving_carton_item)
@@ -73,12 +80,17 @@ def make_receiving_charges():
     return out
 
 
-def make_order_fulfillment_charges():
+def make_order_fulfillment_charges(from_date=None, to_date=None):
     """
     Calculate Per Order Charges based on No Of Orders (SO) and Item Qty
     Calculate Pick and Pack Charges based on No Of Items ( Total Item Qty in each Order)
     """
     filters = get_filters()
+    if from_date:
+        filters["from_date"] = from_date
+    if to_date:
+        filters["to_date"] = to_date
+
     fulfilment_charge_per_order = frappe.db.get_value("Third Party Logistics Settings", None, "fulfilment_charge_per_order_cf")
     fulfilment_charge_per_order_item_cf = frappe.db.get_value("Third Party Logistics Settings", None, "fulfilment_charge_per_order_item_cf")
 
@@ -147,7 +159,7 @@ def make_warehouse_service_charges_for_service_notes():
     frappe.db.commit()
 
 @frappe.whitelist()
-def make_billing():
+def make_billing(from_date=None, to_date=None):
     def make_invoice(key):
         invoice = frappe.new_doc('Sales Invoice')
         invoice.set_posting_time = 1
@@ -155,12 +167,15 @@ def make_billing():
         invoice.customer = key[0]
         invoice.company = key[1]
         invoice.due_date = add_days(getdate(), 30)
+        invoice.billing_from_date_cf = from_date
+        invoice.billing_to_date_cf = to_date
+
         return invoice
 
     invoices = defaultdict(list)
     # collect all charges
-    receiving_charges = make_receiving_charges()
-    order_fulfillment_charges = make_order_fulfillment_charges()
+    receiving_charges = make_receiving_charges(from_date=from_date, to_date=to_date)
+    order_fulfillment_charges = make_order_fulfillment_charges(from_date=from_date, to_date=to_date)
 
     for charges in [receiving_charges, order_fulfillment_charges]:
         for key, items_dd in charges.items():
@@ -222,13 +237,12 @@ def get_carton_container_receiving_charge(customer, company, receiving_carton_it
 
 
 @frappe.whitelist()
-def uninvoice_last_month():
+def uninvoice(from_date, to_date):
     '''
     Set invoiced_cf to 0, for use in testing
     to recreate billing
     '''
-
-    filters = get_filters()
+    filters = dict(from_date=from_date, to_date=to_date)
     frappe.db.sql("""
     update 
         `tabStock Entry` set invoiced_cf = 0
@@ -248,3 +262,24 @@ def uninvoice_last_month():
         and transaction_date between %(from_date)s and %(to_date)s
     """, filters)
     frappe.db.commit()
+
+@frappe.whitelist()
+def print_billing_summary(filters):
+    filters = json.loads(frappe.local.form_dict.filters)
+
+    from third_party_logistics.third_party_logistics.report.billing_summary_tpl.billing_summary_tpl import get_data
+    receiving_charges = get_data(filters)
+    context = dict(filters=filters, receiving_charges=receiving_charges)
+
+    template = "third_party_logistics/third_party_logistics/report/billing_summary_tpl/billing_summary_tpl.html"
+    html = frappe.render_template(template, context)
+    options = {
+        "margin-left": "3mm",
+        "margin-right": "3mm",
+        "margin-top": "50mm",
+        "margin-bottom": "40mm",
+        "orientation": "Landscape"
+    }
+    frappe.local.response.filecontent = get_pdf(html, options=options)
+    frappe.local.response.type = 'download'
+    frappe.local.response.filename = 'Billing Summary.pdf'

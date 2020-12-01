@@ -10,22 +10,22 @@ def get_data():
         'name': 'Sales Order',
         'label': 'Sales Order',
         'description': 'Sales Order'
-        },{
+        }, {
         'type': 'doctype',
         'name': 'Delivery Note',
         'label': 'Delivery Note',
         'description': 'Delivery Note'
-        },{
+        }, {
         'type': 'doctype',
         'name': 'Stock Entry',
         'label': 'Stock Entry',
         'description': 'Stock Entry'
-        },{
+        }, {
         'type': 'doctype',
         'name': 'Service Note CT',
         'label': 'Service Note',
         'description': 'Service Note'
-        },{
+        }, {
         'type': 'doctype',
         'name': 'Sales Invoice',
         'label': 'Sales Invoice',
@@ -36,12 +36,12 @@ def get_data():
         'name': 'Item',
         'label': 'Item',
         'description': 'Item'
-        },{
+        }, {
         'type': 'doctype',
         'name': 'Item Group',
         'label': 'Item Group',
         'description': 'Item Group'
-        },{
+        }, {
         'type': 'doctype',
         'name': 'Warehouse',
         'label': 'Warehouse',
@@ -52,7 +52,7 @@ def get_data():
         'name': 'Customer',
         'label': 'Customer',
         'description': 'Customer'
-        },{
+        }, {
         'type': 'doctype',
         'name': 'Contract',
         'label': 'Contract',
@@ -62,16 +62,25 @@ def get_data():
         'type': 'report',
         'name': 'Storage Billing Details',
         'label': 'Storage Billing Details',
-	    "is_query_report": True,
-	    'doctype':'Storage Charge Log CT',
+        "is_query_report": True,
+        'doctype': 'Storage Charge Log CT',
         'description': 'Storage Charge Log CT'
-        },{
+        }, {
         'type': 'report',
         'name': 'Stock Balance',
         'label': 'Stock Balance',
-	    "is_query_report": True,
-	    'doctype':'Stock Entry',
+        "is_query_report": True,
+        'doctype': 'Stock Entry',
         'description': 'Stock Balance'
+        },
+        {
+        'type': 'report',
+        'name': 'Billing Summary TPL',
+        'label': 'Billing Summary TPL',
+        "is_query_report": True,
+        'doctype': 'Sales Invoice',
+        'description': 'Billing Summary',
+        "route": "#query-report/Billing Summary TPL",
         }]},
         {'label': _('Setup'), 'items': [
         {
@@ -79,7 +88,7 @@ def get_data():
         'name': 'Third Party Logistics Settings',
         'label': 'Third Party Logistics Settings',
         'description': 'Third Party Logistics Settings'
-        },{
+        }, {
         'type': 'doctype',
         'name': 'ShipStation Integration Settings',
         'label': 'ShipStation Integration Settings',
