@@ -103,6 +103,9 @@ def get_data(filters):
                     stock_entry["amount_for_pallet_lc"] = d.amount
 
         invoice.delete()
+
+    receiving_charge_total = sum([d.total_receiving_charge for d in data])
+    data.extend([{"total_receiving_charge": receiving_charge_total}])
     return data
 
 def get_conditions(filters):

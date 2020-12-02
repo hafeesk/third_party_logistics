@@ -9,7 +9,7 @@ frappe.query_reports["Receiving Charges"] = {
       label: __("Customer"),
       fieldtype: "Link",
       options: "Customer",
-      default: "EPIC",
+      // default: "EPIC",
       reqd: 0,
     },
     {

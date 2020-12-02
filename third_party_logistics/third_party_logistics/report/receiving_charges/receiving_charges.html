@@ -31,7 +31,8 @@
     .sub-heading {
         background-color: #efefef;
         font-weight: bold;
-        padding: 5px 15px;
+        font-size: 14px;
+        padding: 15px 5px;
     }
 
     .total {
@@ -41,9 +42,14 @@
 
 <body>
     <center>
-        <h4> Customer: ::{{filters.customer or "" }} </h4>
-        <div class="sub-heading"> Receiving Charges, Billing Period - {{filters.from_date}} to {{filters.to_date}}</div>
+        <h4> Customer: {{filters.customer or "" }} </h4>
     </center>
+    <div class="sub-heading">
+        Receiving Charges
+        <span style="float:right">
+            Billing Period: {{filters.from_date}} to {{filters.to_date}}
+        </span>
+    </div>
     <div style="page-break-after:always;">
         <table class="pure-table pure-table-bordered">
             <colgroup>
@@ -72,6 +78,12 @@
             </thead>
             <tbody>
                 {% for d in receiving_charges %}
+                {% if loop.last %}
+                <tr class="text-bold">
+                    <td colspan="8" class="text-right">Total Charges: </td>
+                    <td class="text-right"> {{ frappe.format_value(d.total_receiving_charge, currency="USD")}} </td>
+                </tr>
+                {% else %}
                 <tr>
                     <td>{{ d.name }}</td>
                     <td>{{ d.posting_date }}</td>
@@ -83,6 +95,7 @@
                     <td class="text-right">{{ d.container_rate or "" }}</td>
                     <td class="text-right">{{ d.total_receiving_charge }}</td>
                 </tr>
+                {% endif %}
                 {% endfor %}
             </tbody>
         </table>

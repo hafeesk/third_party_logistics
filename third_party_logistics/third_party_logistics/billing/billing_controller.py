@@ -277,6 +277,7 @@ def get_receiving_charges_pdf(filters):
     context["base_url"] = frappe.utils.get_site_url(frappe.local.site)
     template = "third_party_logistics/third_party_logistics/report/receiving_charges/receiving_charges.html"
     html = frappe.render_template(template, context)
+
     options = {
         "margin-left": "3mm",
         "margin-right": "3mm",

@@ -75,12 +75,12 @@ def get_data():
         },
         {
         'type': 'report',
-        'name': 'Billing Summary TPL',
-        'label': 'Billing Summary TPL',
+        'name': 'Receiving Charges',
+        'label': 'Receiving Charges',
         "is_query_report": True,
         'doctype': 'Sales Invoice',
-        'description': 'Billing Summary',
-        "route": "#query-report/Billing Summary TPL",
+        'description': 'Receiving Charges',
+        "route": "#query-report/Receiving Charges",
         }]},
         {'label': _('Setup'), 'items': [
         {
