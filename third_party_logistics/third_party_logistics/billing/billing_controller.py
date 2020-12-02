@@ -11,7 +11,6 @@ import json
 from frappe.utils.pdf import get_pdf
 from frappe.utils.file_manager import save_file
 
-
 def get_filters():
     to_date = add_days(get_first_day(getdate()), -1)
     from_date = get_first_day(to_date)
@@ -197,7 +196,7 @@ def make_billing(from_date=None, to_date=None):
         invoice.set_missing_values(for_validate=True)
         invoice.save(ignore_permissions=True)
         filters = dict(from_date=from_date, to_date=to_date, customer=invoice.customer, company=invoice.company)
-        fname, fcontent = get_billing_report(filters)
+        fname, fcontent = get_receiving_charges_pdf(filters)
         save_file(fname, fcontent, "Sales Invoice", invoice.name, is_private=1)
 
     update_invoiced_cf()
@@ -271,12 +270,12 @@ def uninvoice(from_date, to_date):
     """, filters)
     frappe.db.commit()
 
-def get_billing_report(filters):
-    from third_party_logistics.third_party_logistics.report.billing_summary_tpl.billing_summary_tpl import get_data
+def get_receiving_charges_pdf(filters):
+    from third_party_logistics.third_party_logistics.report.receiving_charges.receiving_charges import get_data
     receiving_charges = get_data(filters)
     context = dict(filters=filters, receiving_charges=receiving_charges)
-
-    template = "third_party_logistics/third_party_logistics/report/billing_summary_tpl/billing_summary_tpl.html"
+    context["base_url"] = frappe.utils.get_site_url(frappe.local.site)
+    template = "third_party_logistics/third_party_logistics/report/receiving_charges/receiving_charges.html"
     html = frappe.render_template(template, context)
     options = {
         "margin-left": "3mm",
@@ -285,13 +284,13 @@ def get_billing_report(filters):
         "margin-bottom": "40mm",
         "orientation": "Landscape"
     }
-    fname = "{customer}_Billing_Summary_{from_date}_to_{to_date}.pdf".format(**filters)
+    fname = "{customer}_Receiving_Summary_{from_date}_to_{to_date}.pdf".format(**filters)
     return fname, get_pdf(html, options=options)
 
 @frappe.whitelist()
-def print_billing_summary(filters):
+def print_receiving_charges(filters):
     filters = json.loads(frappe.local.form_dict.filters)
-    fname, content = get_billing_report(filters)
+    fname, content = get_receiving_charges_pdf(filters)
     frappe.local.response.filecontent = content
     frappe.local.response.type = 'download'
     frappe.local.response.filename = fname

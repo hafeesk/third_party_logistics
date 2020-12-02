@@ -5,6 +5,14 @@ frappe.ui.form.on("Third Party Logistics Settings", {
   // refresh: function(frm) { }
 
   prepare_invoice: function (frm) {
+    frappe.show_alert(
+      {
+        message: "Calculation started for Billing.",
+        indicator: "orange",
+      },
+      25
+    );
+    frappe.dom.freeze();
     frappe
       .call({
         method:
@@ -12,7 +20,11 @@ frappe.ui.form.on("Third Party Logistics Settings", {
         args: { from_date: frm.doc.from_date, to_date: frm.doc.to_date },
       })
       .then(() => {
-        frappe.show_alert({ message: "Billing done" });
+        frappe.dom.unfreeze();
+        frappe.show_alert({
+          message: "Billing is completed and Invoices have been created.",
+          indicator: "green",
+        });
       });
   },
 

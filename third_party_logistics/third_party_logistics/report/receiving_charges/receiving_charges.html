@@ -5,24 +5,14 @@
     <meta charset="utf-8" />
     <link href="{{ base_url }}/assets/frappe/css/bootstrap.css" rel="stylesheet" />
     <link type="text/css" rel="stylesheet" href="{{ base_url }}/assets/frappe/css/font-awesome.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{{ base_url }}/assets/third_party_logistics/css/pure-min.css" rel="stylesheet" />
     <meta name="pdfkit-orientation" content="landscape" />
 </head>
 <style>
     body {
         font-family: Tahoma, Geneva, Verdana, sans-serif;
         font-size: 11px;
-    }
-
-    table {
-        width: 100%;
-    }
-
-    thead {
-        display: table-header-group
-    }
-
-    tfoot {
-        display: table-row-group
     }
 
     tr {
@@ -51,43 +41,47 @@
 
 <body>
     <center>
-        <h4> {{filters.customer or "" }} Billing Summary - {{filters.from_date}} to {{filters.to_date}}</h4>
+        <h4> Customer: ::{{filters.customer or "" }} </h4>
+        <div class="sub-heading"> Receiving Charges, Billing Period - {{filters.from_date}} to {{filters.to_date}}</div>
     </center>
     <div style="page-break-after:always;">
-        <table class="table table-bordered">
+        <table class="pure-table pure-table-bordered">
             <colgroup>
                 <col style="width:15%;">
-                <col style="width:15%;">
                 <col style="width:8%;">
+                <col style="width:12%;">
                 <col style="width:10%;">
                 <col style="width:8%;">
                 <col style="width:10%;">
+                <col style="width:8%;">
                 <col style="width:8%;">
                 <col style="width:8%;">
             </colgroup>
             <thead>
                 <tr>
-                    <th>SO#</th>
-                    <th>Customer</th>
+                    <th>Stock Entry#</th>
                     <th>Date</th>
                     <th>Received as Pallet/LC</th>
                     <th>No of Pallet/LC</th>
+                    <th>Rate per Pallet/LC</th>
+                    <th>Amount for Pallet/LC</th>
                     <th>Container Type</th>
-                    <th>Total Receiving Charge</th>
-                    <th>Invoiced</th>
+                    <th>Container Rate</th>
+                    <th>Receiving Charges for Billing</th>
                 </tr>
             </thead>
             <tbody>
                 {% for d in receiving_charges %}
                 <tr>
                     <td>{{ d.name }}</td>
-                    <td>{{ d.customer_cf }}</td>
                     <td>{{ d.posting_date }}</td>
                     <td>{{ d.received_as_cf }}</td>
                     <td class="text-right">{{ d.pallet_lc_qty }}</td>
+                    <td class="text-right">{{ d.rate_per_pallet_lc }}</td>
+                    <td class="text-right">{{ d.amount_for_pallet_lc }}</td>
                     <td>{{ d.container_type_cf or "" }}</td>
+                    <td class="text-right">{{ d.container_rate or "" }}</td>
                     <td class="text-right">{{ d.total_receiving_charge }}</td>
-                    <td class="text-right">{{ d.invoiced_cf }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
