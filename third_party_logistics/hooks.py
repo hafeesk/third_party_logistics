@@ -79,13 +79,11 @@ doctype_list_js = {"Stock Entry": "public/js/stock_entry_list.js"}
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-#	}
-# }
+doc_events = {
+	"Sales Invoice": {
+		"on_submit": "third_party_logistics.third_party_logistics.billing.billing_controller.update_invoiced_cf"
+	}
+}
 
 # Scheduled Tasks
 # ---------------

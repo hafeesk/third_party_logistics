@@ -2,14 +2,13 @@
 // For license information, please see license.txt
 /* eslint-disable */
 
-frappe.query_reports["Receiving Charges"] = {
+frappe.query_reports["Pick and Pack Charges Summary"] = {
   filters: [
     {
       fieldname: "customer",
       label: __("Customer"),
       fieldtype: "Link",
       options: "Customer",
-      // default: "EPIC",
       reqd: 0,
     },
     {
@@ -36,19 +35,4 @@ frappe.query_reports["Receiving Charges"] = {
       hidden: 1,
     },
   ],
-
-  onload(report) {
-    report.page.add_action_icon("fa fa-print", function () {
-      if (!report.get_filter_value("customer")) {
-        frappe.throw("Please select Customer for report.");
-        return;
-      }
-      let url =
-        "/api/method/third_party_logistics.third_party_logistics.billing.billing_controller.get_billing_details";
-      const args = {
-        filters: report.get_filter_values(),
-      };
-      open_url_post(url, args);
-    });
-  },
 };

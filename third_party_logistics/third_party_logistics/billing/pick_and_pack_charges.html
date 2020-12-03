@@ -29,7 +29,8 @@
             {% if loop.last %}
             <tr class="text-bold">
                 <td colspan="5" class="text-right">Total Pick and Pack Charges: </td>
-                <td class="text-right"> {{ frappe.format_value(d.total or 0, currency="USD")}} </td>
+                <td class="text-right"> {{ frappe.format_value(d.total_pick_and_pack_charge or 0, currency="USD")}}
+                </td>
             </tr>
             {% else %}
             <tr>

@@ -202,12 +202,9 @@ def make_billing(from_date=None, to_date=None):
         fname, fcontent = get_billing_details_pdf(filters)
         save_file(fname, fcontent, "Sales Invoice", invoice.name, is_private=1)
 
-    update_invoiced_cf()
-
     frappe.db.commit()
 
-def update_invoiced_cf():
-    filters = get_filters()
+def update_invoiced_cf(doc, method):
     frappe.db.sql("""
     update 
         `tabStock Entry` set invoiced_cf = 1
@@ -216,7 +213,7 @@ def update_invoiced_cf():
         and invoiced_cf = 0
         and posting_date between %(from_date)s and %(to_date)s
         and customer_cf is not null
-    """, filters)
+    """, dict(from_date=doc.billing_from_date_cf, to_date=doc.billing_to_date_cf), )
 
     frappe.db.sql("""
     update 
@@ -225,7 +222,7 @@ def update_invoiced_cf():
         docstatus = 1
         and invoiced_cf = 0
         and transaction_date between %(from_date)s and %(to_date)s
-    """, filters)
+    """, dict(from_date=doc.billing_from_date_cf, to_date=doc.billing_to_date_cf), )
 
 
 def get_carton_container_receiving_charge(customer, company, receiving_carton_item):

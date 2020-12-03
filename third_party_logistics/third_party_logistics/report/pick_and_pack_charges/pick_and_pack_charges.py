@@ -71,7 +71,7 @@ union all
         d["total_pick_and_pack_charge"] = (d.per_order_charge or 0) + (d.per_item_charge * d.total_item_qty)
 
     total = sum([d.total_pick_and_pack_charge for d in data])
-    data.extend([{"total": total}])
+    data.extend([{"total_pick_and_pack_charge": total}])
     return data
 
 
