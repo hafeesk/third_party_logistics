@@ -10,6 +10,9 @@ from collections import defaultdict
 import json
 from frappe.utils.pdf import get_pdf
 from frappe.utils.file_manager import save_file
+from erpnext import get_default_company
+from erpnext.accounts.party import get_party_details
+from erpnext.stock.get_item_details import get_price_list_rate_for
 
 def get_filters():
     to_date = add_days(get_first_day(getdate()), -1)
@@ -196,7 +199,7 @@ def make_billing(from_date=None, to_date=None):
         invoice.set_missing_values(for_validate=True)
         invoice.save(ignore_permissions=True)
         filters = dict(from_date=from_date, to_date=to_date, customer=invoice.customer, company=invoice.company)
-        fname, fcontent = get_receiving_charges_pdf(filters)
+        fname, fcontent = get_billing_details_pdf(filters)
         save_file(fname, fcontent, "Sales Invoice", invoice.name, is_private=1)
 
     update_invoiced_cf()
@@ -270,14 +273,16 @@ def uninvoice(from_date, to_date):
     """, filters)
     frappe.db.commit()
 
-def get_receiving_charges_pdf(filters):
-    from third_party_logistics.third_party_logistics.report.receiving_charges.receiving_charges import get_data
-    receiving_charges = get_data(filters)
-    context = dict(filters=filters, receiving_charges=receiving_charges)
-    context["base_url"] = frappe.utils.get_site_url(frappe.local.site)
-    template = "third_party_logistics/third_party_logistics/report/receiving_charges/receiving_charges.html"
-    html = frappe.render_template(template, context)
+def get_billing_details_pdf(filters):
+    from third_party_logistics.third_party_logistics.report.receiving_charges.receiving_charges import get_data as get_receiving_charges
+    from third_party_logistics.third_party_logistics.report.pick_and_pack_charges.pick_and_pack_charges import get_data as get_pick_and_pack_charges
+    context = dict(filters=filters, base_url=frappe.utils.get_site_url(frappe.local.site))
 
+    context["receiving_charges"] = get_receiving_charges(filters)
+    context["pick_and_pack_charges"] = get_pick_and_pack_charges(filters)
+
+    template = "third_party_logistics/third_party_logistics/billing/billing_details.html"
+    html = frappe.render_template(template, context)
     options = {
         "margin-left": "3mm",
         "margin-right": "3mm",
@@ -285,13 +290,37 @@ def get_receiving_charges_pdf(filters):
         "margin-bottom": "40mm",
         "orientation": "Landscape"
     }
-    fname = "{customer}_Receiving_Summary_{from_date}_to_{to_date}.pdf".format(**filters)
+    fname = "{customer}_Billing_Detail_{from_date}_to_{to_date}.pdf".format(**filters)
     return fname, get_pdf(html, options=options)
 
 @frappe.whitelist()
-def print_receiving_charges(filters):
+def get_billing_details(filters):
     filters = json.loads(frappe.local.form_dict.filters)
-    fname, content = get_receiving_charges_pdf(filters)
+    fname, content = get_billing_details_pdf(filters)
     frappe.local.response.filecontent = content
     frappe.local.response.type = 'download'
     frappe.local.response.filename = fname
+
+
+def get_item_rate(customer, item_code, out):
+    if out.get((customer, item_code)):
+        return out.get((customer, item_code))
+    default_price_list = frappe.db.sql("""
+        select cu.name, 
+        COALESCE(cu.default_price_list,cug.default_price_list,sing.value) price_list
+        from tabCustomer cu
+        inner join `tabCustomer Group` cug on cug.name = cu.customer_group
+        cross join tabSingles sing on sing.field = 'selling_price_list'
+        and sing.doctype = 'Selling Settings'
+        where cu.name=%s""", (customer,), as_dict=True)
+
+    from erpnext.stock.get_item_details import get_price_list_rate_for, get_price_list_rate
+    customer_details = get_party_details(party=customer, party_type="Customer")
+    customer_details.update({
+        "company": get_default_company(),
+        "price_list": [d["price_list"] for d in default_price_list if d.name == customer][0],
+        "transaction_date": getdate()
+    })
+    rate = get_price_list_rate_for(customer_details, item_code) or 0.0
+    out.setdefault((customer, item_code), rate)
+    return rate

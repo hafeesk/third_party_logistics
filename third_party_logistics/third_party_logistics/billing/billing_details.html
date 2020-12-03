@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <link href="{{ base_url }}/assets/frappe/css/bootstrap.css" rel="stylesheet" />
+    <link type="text/css" rel="stylesheet" href="{{ base_url }}/assets/frappe/css/font-awesome.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{{ base_url }}/assets/third_party_logistics/css/pure-min.css" rel="stylesheet" />
+    <meta name="pdfkit-orientation" content="landscape" />
+</head>
+<style>
+    body {
+        font-family: Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 11px;
+    }
+
+    tr {
+        page-break-inside: avoid
+    }
+
+    .text-right {
+        text-align: right;
+    }
+
+    .text-bold {
+        font-weight: bold;
+        border-top: 1px solid #cccccc;
+    }
+
+    .sub-heading {
+        background-color: #efefef;
+        font-weight: bold;
+        font-size: 14px;
+        padding: 15px 5px;
+    }
+
+    .total {
+        background-color: #efefef;
+    }
+</style>
+
+<body>
+    <center>
+        <h4> Customer: {{filters.customer or "" }} </h4>
+    </center>
+
+    {% include "third_party_logistics/third_party_logistics/billing/receiving_charges.html" %}
+    {% include "third_party_logistics/third_party_logistics/billing/pick_and_pack_charges.html" %}
+
+</body>
+
+</html>

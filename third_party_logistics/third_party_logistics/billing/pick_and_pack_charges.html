@@ -1,0 +1,47 @@
+<div class="sub-heading">
+    Pick and Pack Charges
+    <span style="float:right">
+        Billing Period: {{filters.from_date}} to {{filters.to_date}}
+    </span>
+</div>
+<div style="page-break-after:always;">
+    <table class="pure-table pure-table-bordered">
+        <colgroup>
+            <col style="width:50%;">
+            <col style="width:10%;">
+            <col style="width:10%;">
+            <col style="width:10%;">
+            <col style="width:10%;">
+            <col style="width:10%;">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Sales Order#</th>
+                <th>Date</th>
+                <th>Per Order Charge (A)</th>
+                <th>Total Item Qty (B)</th>
+                <th>Per Item Charge</th>
+                <th>Total Pick & Pack Charge [A+(B*C)]</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in pick_and_pack_charges %}
+            {% if loop.last %}
+            <tr class="text-bold">
+                <td colspan="5" class="text-right">Total Pick and Pack Charges: </td>
+                <td class="text-right"> {{ frappe.format_value(d.total or 0, currency="USD")}} </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td>{{ d.name }}</td>
+                <td>{{ d.transaction_date }}</td>
+                <td class="text-right">{{ d.per_order_charge or "" }}</td>
+                <td class="text-right">{{ d.total_item_qty }}</td>
+                <td class="text-right">{{ d.per_item_charge }}</td>
+                <td class="text-right">{{ d.total_pick_and_pack_charge }}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
