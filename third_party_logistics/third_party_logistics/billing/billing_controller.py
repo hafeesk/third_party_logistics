@@ -14,10 +14,12 @@ from erpnext import get_default_company
 from erpnext.accounts.party import get_party_details
 from erpnext.stock.get_item_details import get_price_list_rate_for
 
-def get_filters():
-    to_date = add_days(get_first_day(getdate()), -1)
-    from_date = get_first_day(to_date)
-    return dict(from_date=from_date, to_date=to_date)
+def get_filters(from_date, to_date):
+    out = dict()
+    out["to_date"] = to_date or add_days(get_first_day(getdate()), -1)
+    out["from_date"] = from_date or get_first_day(out["to_date"])
+    return out
+
 
 def make_storage_charges():
     """
@@ -37,11 +39,7 @@ def make_receiving_charges(from_date=None, to_date=None):
     Creates one `Sales Invoice` per customer for receiving charges for all Material Receipt in the previous month.
     Scheduled to run on 1st of month 00:15
     """
-    filters = get_filters()
-    if from_date:
-        filters["from_date"] = from_date
-    if to_date:
-        filters["to_date"] = to_date
+    filters = get_filters(from_date, to_date)
 
     def get_invoice_items(customer, company, items):
         carton_container_charges = get_carton_container_receiving_charge(customer, company, receiving_carton_item)
@@ -81,17 +79,43 @@ def make_receiving_charges(from_date=None, to_date=None):
         out[key] = get_invoice_items(key[0], key[1], items)
     return out
 
+def make_outbound_pallet_charges(from_date=None, to_date=None):
+    """
+    Total Outbound Charge =
+    Outbound Freight  charges * Outbound Markup Percent (defined at customer level)  +
+    Outbound Pallet Loading Charge * Pallet Qty
+    """
+    filters = get_filters(from_date, to_date)
+
+    invoice_items = frappe.db.sql("""
+    select ste.customer_cf, ste.company, sum(pallet_outbound_qty_cf) pallet_outbound_qty_cf,
+    sum(outbound_freight_charge_cf * (1+(.01*cu.outbound_freight_markup_margin_cf))) outbound_freight_charge_cf
+    from `tabStock Entry` ste
+    inner join tabCustomer cu on cu.name = ste.customer_cf
+    where ste.stock_entry_type = 'Material Issue'
+    and ste.docstatus = 1 and ste.invoiced_cf = 0
+    and ste.posting_date between %(from_date)s and %(to_date)s
+    group by ste.customer_cf, ste.company """, filters, as_dict=True, debug=False)
+
+    outbound_freight_charges = frappe.db.get_value("Third Party Logistics Settings", None, "outbound_freight_charges")
+    loading_pallet_item = frappe.db.get_value("Third Party Logistics Settings", None, "loading_pallet_item")
+
+    out = defaultdict()
+    for d in invoice_items:
+        items = out.setdefault((d.customer_cf, d.company), [])
+        items.append({"item_code": loading_pallet_item, "qty": d.pallet_outbound_qty_cf})
+        if d.outbound_freight_charge_cf:
+            items.append({"item_code": outbound_freight_charges, "qty": 1,
+            "rate": d.outbound_freight_charge_cf, "amount": d.outbound_freight_charge_cf})
+
+    return out
 
 def make_order_fulfillment_charges(from_date=None, to_date=None):
     """
     Calculate Per Order Charges based on No Of Orders (SO) and Item Qty
     Calculate Pick and Pack Charges based on No Of Items ( Total Item Qty in each Order)
     """
-    filters = get_filters()
-    if from_date:
-        filters["from_date"] = from_date
-    if to_date:
-        filters["to_date"] = to_date
+    filters = get_filters(from_date, to_date)
 
     fulfilment_charge_per_order = frappe.db.get_value("Third Party Logistics Settings", None, "fulfilment_charge_per_order_cf")
     fulfilment_charge_per_order_item_cf = frappe.db.get_value("Third Party Logistics Settings", None, "fulfilment_charge_per_order_item_cf")
@@ -174,28 +198,26 @@ def make_billing(from_date=None, to_date=None):
 
         return invoice
 
-    if not from_date or not to_date:
-        filters = get_filters()
-        from_date = filters.get("from_date")
-        to_date = filters.get("to_date")
+    filters = get_filters(from_date, to_date)
+    from_date = filters["from_date"]
+    to_date = filters["to_date"]
 
     invoices = defaultdict(list)
     # collect all charges
-    receiving_charges = make_receiving_charges(from_date=from_date, to_date=to_date)
-    order_fulfillment_charges = make_order_fulfillment_charges(from_date=from_date, to_date=to_date)
+    receiving_charges = {}  # make_receiving_charges(from_date=from_date, to_date=to_date)
+    order_fulfillment_charges = {}  # make_order_fulfillment_charges(from_date=from_date, to_date=to_date)
+    outbound_pallet_charges = make_outbound_pallet_charges(from_date=from_date, to_date=to_date)
 
-    for charges in [receiving_charges, order_fulfillment_charges]:
-        for key, items_dd in charges.items():
-            invoices[key].append(items_dd)
+    # combine charges from all activities to make consolidated invoice per customer
+    for charges in [receiving_charges, order_fulfillment_charges, outbound_pallet_charges]:
+        for customer_company, items in charges.items():
+            invoices[customer_company].extend(items)
 
-    for key, items in invoices.items():
-        invoice = make_invoice(key)
-        for dd in items:
-            for item, qty in dd.items():
-                if qty > 0:
-                    invoice_item = invoice.append("items")
-                    invoice_item.item_code = item
-                    invoice_item.qty = qty
+    for customer_company, items in invoices.items():
+        invoice = make_invoice(customer_company)
+        for item_line in items:
+            invoice_item = invoice.append("items")
+            invoice_item.update(item_line)
         invoice.set_missing_values(for_validate=True)
         invoice.save(ignore_permissions=True)
         filters = dict(from_date=from_date, to_date=to_date, customer=invoice.customer, company=invoice.company)
@@ -206,7 +228,7 @@ def make_billing(from_date=None, to_date=None):
 
 def update_invoiced_cf(doc, method):
     frappe.db.sql("""
-    update 
+    update
         `tabStock Entry` set invoiced_cf = 1
     where
         stock_entry_type = 'Material Receipt'
@@ -216,7 +238,7 @@ def update_invoiced_cf(doc, method):
     """, dict(from_date=doc.billing_from_date_cf, to_date=doc.billing_to_date_cf), )
 
     frappe.db.sql("""
-    update 
+    update
         `tabSales Order` set invoiced_cf = 1
     where
         docstatus = 1
@@ -251,7 +273,7 @@ def uninvoice(from_date, to_date):
     '''
     filters = dict(from_date=from_date, to_date=to_date)
     frappe.db.sql("""
-    update 
+    update
         `tabStock Entry` set invoiced_cf = 0
     where
         stock_entry_type = 'Material Receipt'
@@ -261,7 +283,7 @@ def uninvoice(from_date, to_date):
     """, filters)
 
     frappe.db.sql("""
-    update 
+    update
         `tabSales Order` set invoiced_cf = 0
     where
         docstatus = 1
@@ -273,10 +295,12 @@ def uninvoice(from_date, to_date):
 def get_billing_details_pdf(filters):
     from third_party_logistics.third_party_logistics.report.receiving_charges.receiving_charges import get_data as get_receiving_charges
     from third_party_logistics.third_party_logistics.report.pick_and_pack_charges.pick_and_pack_charges import get_data as get_pick_and_pack_charges
+    from third_party_logistics.third_party_logistics.report.outbound_pallet_loading_charges.outbound_pallet_loading_charges import get_data as get_outbound_pallet_loading_charges
     context = dict(filters=filters, base_url=frappe.utils.get_site_url(frappe.local.site))
 
     context["receiving_charges"] = get_receiving_charges(filters)
     context["pick_and_pack_charges"] = get_pick_and_pack_charges(filters)
+    context["outbound_pallet_loading_charges"] = get_outbound_pallet_loading_charges(filters)
 
     template = "third_party_logistics/third_party_logistics/billing/billing_details.html"
     html = frappe.render_template(template, context)
@@ -303,7 +327,7 @@ def get_item_rate(customer, item_code, out):
     if out.get((customer, item_code)):
         return out.get((customer, item_code))
     default_price_list = frappe.db.sql("""
-        select cu.name, 
+        select cu.name,
         COALESCE(cu.default_price_list,cug.default_price_list,sing.value) price_list
         from tabCustomer cu
         inner join `tabCustomer Group` cug on cug.name = cu.customer_group

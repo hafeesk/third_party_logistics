@@ -1,0 +1,48 @@
+<div class="sub-heading">
+    Outbound Pallet Loading Charges
+    <span style="float:right">
+        Billing Period: {{filters.from_date}} to {{filters.to_date}}
+    </span>
+</div>
+<div style="page-break-after:always;">
+    <table class="pure-table pure-table-bordered">
+        <colgroup>
+            <col style="width:50%;">
+            <col style="width:10%;">
+            <col style="width:10%;">
+            <col style="width:10%;">
+            <col style="width:10%;">
+            <col style="width:10%;">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>{{_("Outbound Stock Entry#")}}</th>
+                <th>{{_("Date")}}</th>
+                <th>{{_("No of Pallets (A)")}}</th>
+                <th>{{_("Qty on Pallet")}}</th>
+                <th>{{_("Tracking Number")}}</th>
+                <th>{{_("Total Outbound Pallet Loading Charge(A * Charge) + Outbound Freight * Markup Percent")}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in outbound_pallet_loading_charges %}
+            {% if loop.last %}
+            <tr class="text-bold">
+                <td colspan="5" class="text-right">Total Outbound Pallet Loading Charges: </td>
+                <td class="text-right"> {{ frappe.format_value(d.total_outbound_freight_charge or 0, currency="USD")}}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td>{{ d.name }}</td>
+                <td>{{ d.posting_date }}</td>
+                <td class="text-right">{{ d.pallet_outbound_qty_cf }}</td>
+                <td>{{ d.each_pallet_qty_cf }}</td>
+                <td>{{ d.tracking_number_cf }}</td>
+                <td class="text-right">{{ d.total_outbound_freight_charge }}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
