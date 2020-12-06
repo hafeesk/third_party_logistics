@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.utils import getdate, add_days
-from third_party_logistics.third_party_logistics.billing.billing_controller import get_item_rate
+from third_party_logistics.third_party_logistics.billing.utils import get_item_rate
 
 
 def execute(filters=None):

@@ -1,0 +1,62 @@
+{%- from  "third_party_logistics/third_party_logistics/billing/macros.html" import render_number, render_money -%}
+
+<div class="sub-heading">
+    Storage Charges
+    <span style="float:right">
+        Billing Period: {{filters.from_date}} to {{filters.to_date}}
+    </span>
+</div>
+<div style="page-break-after:always;">
+    <table class="pure-table pure-table-bordered">
+        <colgroup>
+            <col style="width:15%;">
+            <col style="width:15%;">
+            <col style="width:8%;">
+            <col style="width:8%;">
+            <col style="width:8%;">
+            <col style="width:8%;">
+            <col style="width:8%;">
+            <col style="width:8%;">
+            <col style="width:8%;">
+            <col style="width:15%;">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Item Group</th>
+                <th>Item</th>
+                <th>Inventory as on end Date of Month</th>
+                <th>Item Volume</th>
+                <th>Charge per Cubic Feet</th>
+                <th>Regular Storage Charge</th>
+                <th>LTS Qty</th>
+                <th>LTS Rate</th>
+                <th>Long Term Storage Charge</th>
+                <th>Total Charge</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in daily_storage_fees %}
+            <tr>
+                <td>{{d.item_group}}</td>
+                <td>{{d.item_name}}</td>
+                <td class="text-right">{{ render_number(d.qty)}}</td>
+                <td class="text-right">{{render_number(d.item_volume)}}</td>
+                <td class="text-right">{{render_money(d.storage_charge_per_cubic_feet)}}</td>
+                <td class="text-right">{{render_money(d.regular_storage_charge)}}</td>
+                <td class="text-right">{{render_number(d.lts_qty)}}</td>
+                <td class="text-right">{{render_money(d.lts_storage_rate)}}</td>
+                <td class="text-right">{{render_money(d.lts_storage_charge)}}</td>
+                <td class="text-right">{{render_money(d.total_storage_charge)}}</td>
+            </tr>
+            {% endfor %}
+            <!-- total line -->
+            {% if daily_storage_fees %}
+            <tr class="text-bold">
+                <td colspan="9" class="text-right">Total Storage Charges: </td>
+                {% set total = daily_storage_fees | sum(attribute="total_storage_charge") %}
+                <td class="text-right"> {{ frappe.format_value(total, currency="USD")}} </td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>

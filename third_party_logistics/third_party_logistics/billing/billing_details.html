@@ -44,11 +44,19 @@
     <center>
         <h4> Customer: {{filters.customer or "" }} </h4>
     </center>
-
-    {% include "third_party_logistics/third_party_logistics/billing/receiving_charges.html" %}
-    {% include "third_party_logistics/third_party_logistics/billing/pick_and_pack_charges.html" %}
+    {% if monthly_storage_fees %}
+    {% include "third_party_logistics/third_party_logistics/billing/storage_charges_for_monthly_billing.html" %}
+    {% endif %}
+    {% if daily_storage_fees %}
+    {% include "third_party_logistics/third_party_logistics/billing/storage_charges_for_daily_billing.html" %}
+    {% endif %}
+    {% if receiving_charges %}
+    {% include "third_party_logistics/third_party_logistics/billing/receiving_charges.html" %} {% endif %}
+    {% if pick_and_pack_charges %}
+    {% include "third_party_logistics/third_party_logistics/billing/pick_and_pack_charges.html" %} {% endif %}
+    {% if outbound_pallet_loading_charges %}
     {% include "third_party_logistics/third_party_logistics/billing/outbound_pallet_loading_charges.html" %}
-
+    {% endif %}
 </body>
 
 </html>

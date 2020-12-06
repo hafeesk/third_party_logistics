@@ -1,3 +1,4 @@
+{%- from  "third_party_logistics/third_party_logistics/billing/macros.html" import render_number, render_money -%}
 <div class="sub-heading">
     Receiving Charges
     <span style="float:right">
@@ -36,12 +37,12 @@
                 <td>{{ d.name }}</td>
                 <td>{{ d.posting_date }}</td>
                 <td>{{ d.received_as_cf }}</td>
-                <td class="text-right">{{ d.pallet_lc_qty }}</td>
-                <td class="text-right">{{ d.rate_per_pallet_lc }}</td>
-                <td class="text-right">{{ d.amount_for_pallet_lc }}</td>
+                <td class="text-right">{{ render_number(d.pallet_lc_qty)  }}</td>
+                <td class="text-right">{{ render_money(d.rate_per_pallet_lc)  }}</td>
+                <td class="text-right">{{ render_money(d.amount_for_pallet_lc)  }}</td>
                 <td>{{ d.container_type_cf or "" }}</td>
-                <td class="text-right">{{ d.container_rate or "" }}</td>
-                <td class="text-right">{{ d.total_receiving_charge }}</td>
+                <td class="text-right">{{ d.container_rate and render_money(d.container_rate) or "" }}</td>
+                <td class="text-right">{{ render_money(d.total_receiving_charge) }}</td>
             </tr>
             {% endfor %}
             <!-- total line -->

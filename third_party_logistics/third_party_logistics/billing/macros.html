@@ -1,0 +1,7 @@
+{%- macro render_money(amount) -%}
+{{ amount and frappe.utils.fmt_money(amount) or 0}}
+{%- endmacro -%}
+
+{%- macro render_number(number, precision) -%}
+{{ number and frappe.utils.fmt_money(number, precision or 3) or 0}}
+{%- endmacro -%}

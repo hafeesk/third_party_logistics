@@ -1,3 +1,4 @@
+{%- from  "third_party_logistics/third_party_logistics/billing/macros.html" import render_number, render_money -%}
 <div class="sub-heading">
     Pick and Pack Charges
     <span style="float:right">
@@ -29,10 +30,10 @@
             <tr>
                 <td>{{ d.name }}</td>
                 <td>{{ d.transaction_date }}</td>
-                <td class="text-right">{{ d.per_order_charge or "" }}</td>
-                <td class="text-right">{{ d.total_item_qty }}</td>
-                <td class="text-right">{{ d.per_item_charge }}</td>
-                <td class="text-right">{{ d.total_pick_and_pack_charge }}</td>
+                <td class="text-right">{{ render_money(d.per_order_charge) or "" }}</td>
+                <td class="text-right">{{ render_number(d.total_item_qty) }}</td>
+                <td class="text-right">{{ render_money(d.per_item_charge) }}</td>
+                <td class="text-right">{{ render_money(d.total_pick_and_pack_charge) }}</td>
             </tr>
             {% endfor %}
 

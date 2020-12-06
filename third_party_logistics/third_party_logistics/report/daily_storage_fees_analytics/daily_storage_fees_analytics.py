@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.utils import getdate, add_days, date_diff
-from third_party_logistics.third_party_logistics.billing.billing_controller import get_item_rate
+from third_party_logistics.third_party_logistics.billing.utils import get_item_rate
 from erpnext.stock.report.stock_balance.stock_balance import execute as get_stock_balance
 from operator import itemgetter
 from dateutil.relativedelta import relativedelta
@@ -32,7 +32,6 @@ def get_columns(filters):
     ]
 
 def get_data(filters):
-    # set from_date to 1 year previous, to calculate LTSF
     storage_charge_items = get_storage_charge_items()
     item_details = get_item_details()
     item_rates = dict()
@@ -127,3 +126,58 @@ def get_conditions(filters):
 
 def get_customers_for_billing_cycle(cycle):
         return [d[0] for d in frappe.db.get_all("Customer", filters={"storage_billing_model_cf": cycle}, as_list=1)]
+
+
+def get_invoice_items(filters):
+    """
+    return invoice items (storage charge item , qty) for billing
+    """
+    storage_charge_items = get_storage_charge_items()
+    item_details = get_item_details()
+    customers = get_customers_for_billing_cycle("Daily")
+    invoice_items = []
+
+    stock_filters = copy.deepcopy(filters)
+    for n in range(date_diff(filters["to_date"], filters["from_date"]) + 1):
+        curr_date = add_days(filters["from_date"], n)
+        stock_filters.update({
+            "to_date": curr_date,
+            "from_date": getdate(curr_date) + relativedelta(years=-1)
+        })
+        _cols, stock_balance = get_stock_balance(stock_filters)
+        for d in [frappe._dict(x) for x in stock_balance]:
+            details = item_details.get(d.item_code)
+
+            # skip non customer items
+            customer = filters.get("customer")
+            # apply customer filter if set
+            if not details.is_customer_provided_item \
+            or details.customer not in customers \
+            or (customer and not customer == details.get("customer")):
+                continue
+
+            # Regular Storage Calculation
+            regular_storage_charge_item = d.daily_storage_charge_cf or storage_charge_items.default_daily_storage_per_cubic_feet_charge
+            regular_storage_qty = d.bal_qty
+            # LTSF Calculation
+            lts_charge_item = storage_charge_items.default_long_term_storage_fees_for_daily_cycle
+            lts_qty = 0 if not d.bal_qty > d.in_qty else (d.bal_qty - d.in_qty)
+
+            if regular_storage_qty:
+                invoice_items.append({
+                    "item_code": regular_storage_charge_item,
+                    "qty": regular_storage_qty
+                })
+            if lts_qty:
+                invoice_items.append({
+                    "item_code": lts_charge_item,
+                    "qty": lts_qty
+                })
+
+    if invoice_items:
+        df = pd.DataFrame(invoice_items)
+        g = df.groupby('item_code', as_index=False).agg('sum')
+        data = g.to_dict('r')
+        return sorted(data, key=itemgetter('item_code'))
+
+    return []

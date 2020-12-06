@@ -32,7 +32,7 @@ frappe.ui.form.on("Third Party Logistics Settings", {
     frappe
       .call({
         method:
-          "third_party_logistics.third_party_logistics.billing.billing_controller.uninvoice",
+          "third_party_logistics.third_party_logistics.billing.utils.uninvoice",
         args: { from_date: frm.doc.from_date, to_date: frm.doc.to_date },
       })
       .then(() => {
