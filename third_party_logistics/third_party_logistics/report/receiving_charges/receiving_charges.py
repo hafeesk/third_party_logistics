@@ -67,9 +67,6 @@ def get_data(filters):
             d["rate_per_pallet_lc"] = get_item_rate(d.customer_cf, receiving_pallet_item, customer_item_rates)
             d["amount_for_pallet_lc"] = d.pallet_qty_cf * d["rate_per_pallet_lc"]
             d.total_receiving_charge = d["amount_for_pallet_lc"]
-
-    receiving_charge_total = sum([d.total_receiving_charge for d in data])
-    data.extend([{"total_receiving_charge": receiving_charge_total}])
     return data
 
 def get_conditions(filters):

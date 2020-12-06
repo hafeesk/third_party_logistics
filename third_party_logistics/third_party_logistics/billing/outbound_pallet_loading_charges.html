@@ -26,13 +26,6 @@
         </thead>
         <tbody>
             {% for d in outbound_pallet_loading_charges %}
-            {% if loop.last %}
-            <tr class="text-bold">
-                <td colspan="5" class="text-right">Total Outbound Pallet Loading Charges: </td>
-                <td class="text-right"> {{ frappe.format_value(d.total_outbound_freight_charge or 0, currency="USD")}}
-                </td>
-            </tr>
-            {% else %}
             <tr>
                 <td>{{ d.name }}</td>
                 <td>{{ d.posting_date }}</td>
@@ -41,8 +34,15 @@
                 <td>{{ d.tracking_number_cf }}</td>
                 <td class="text-right">{{ d.total_outbound_freight_charge }}</td>
             </tr>
-            {% endif %}
             {% endfor %}
+            <!-- total line -->
+            {% if outbound_pallet_loading_charges %}
+            <tr class="text-bold">
+                <td colspan="5" class="text-right">Total Outbound Pallet Loading Charges: </td>
+                {% set total = outbound_pallet_loading_charges | sum(attribute="total_outbound_freight_charge") %}
+                <td class="text-right"> {{ frappe.format_value(total, currency="USD")}} </td>
+            </tr>
+            {% endif %}
         </tbody>
     </table>
 </div>

@@ -32,12 +32,6 @@
         </thead>
         <tbody>
             {% for d in receiving_charges %}
-            {% if loop.last %}
-            <tr class="text-bold">
-                <td colspan="8" class="text-right">Total Receiving Charges: </td>
-                <td class="text-right"> {{ frappe.format_value(d.total_receiving_charge, currency="USD")}} </td>
-            </tr>
-            {% else %}
             <tr>
                 <td>{{ d.name }}</td>
                 <td>{{ d.posting_date }}</td>
@@ -49,8 +43,15 @@
                 <td class="text-right">{{ d.container_rate or "" }}</td>
                 <td class="text-right">{{ d.total_receiving_charge }}</td>
             </tr>
-            {% endif %}
             {% endfor %}
+            <!-- total line -->
+            {% if receiving_charges %}
+            <tr class="text-bold">
+                <td colspan="8" class="text-right">Total Receiving Charges: </td>
+                {% set total = receiving_charges | sum(attribute="total_receiving_charge") %}
+                <td class="text-right"> {{ frappe.format_value(total, currency="USD")}} </td>
+            </tr>
+            {% endif %}
         </tbody>
     </table>
 </div>

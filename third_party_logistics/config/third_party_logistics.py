@@ -111,13 +111,51 @@ def get_data():
         },
         {
           "type": "report",
+          "name": "Pick and Pack Charges Summary",
+          "label": "Pick and Pack Charges Summary",
+          "is_query_report": True,
+          "doctype": "Stock Entry",
+          "description": "Pick and Pack Charges Summary",
+          "route": "#query-report/Pick and Pack Charges Summary"
+        },
+        {
+          "type": "report",
           "name": "Pick and Pack Charges",
           "label": "Pick and Pack Charges",
           "is_query_report": True,
           "doctype": "Stock Entry",
           "description": "Pick and Pack Charges",
           "route": "#query-report/Pick and Pack Charges"
+        },
+                {
+          "type": "report",
+          "name": "Outbound Pallet Loading Charges",
+          "label": "Outbound Pallet Loading Charges",
+          "is_query_report": True,
+          "doctype": "Stock Entry",
+          "description": "Outbound Pallet Loading Charges",
+          "route": "#query-report/Outbound Pallet Loading Charges"
+        },
+                {
+          "type": "report",
+          "name": "Monthly Storage Fees Analytics",
+          "label": "Monthly Storage Fees Analytics",
+          "is_query_report": True,
+          "doctype": "Stock Entry",
+          "description": "Monthly Storage Fees Analytics",
+          "route": "#query-report/Monthly Storage Fees Analytics"
+        },
+        {
+          "type": "report",
+          "name": "Daily Storage Fees Analytics",
+          "label": "Daily Storage Fees Analytics",
+          "is_query_report": True,
+          "doctype": "Stock Entry",
+          "description": "Daily Storage Fees Analytics",
+          "route": "#query-report/Daily Storage Fees Analytics"
         }
+
+
       ]
     },
     {

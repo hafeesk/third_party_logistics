@@ -1,7 +1,8 @@
 frappe.ui.form.on("Stock Entry", {
   stock_entry_type: function (frm) {
-    frm.toggle_reqd("customer_cf", true);
-    frm.toggle_reqd("received_as_cf", true);
+    let reqd = frm.doc.stock_entry_type == "Material Receipt";
+    frm.toggle_reqd("customer_cf", reqd);
+    frm.toggle_reqd("received_as_cf", reqd);
   },
 
   received_as_cf: function (frm) {
