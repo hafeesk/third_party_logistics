@@ -84,19 +84,19 @@ def get_data(filters):
                 total_storage_charge=regular_storage_charge + lts_storage_charge,
             )
             data.append(item)
-
-    group_columns = ["customer", "item_group", "item_name", "item_volume", "storage_charge_per_cubic_feet", "lts_storage_rate"]
-    aggregations = {
-                "qty": "mean",
-                "regular_storage_charge": "sum",
-                "lts_qty": "mean",
-                "lts_storage_charge": "sum",
-                "total_storage_charge": "sum",
-    }
-    df = pd.DataFrame(data)
-    g = df.groupby(group_columns, as_index=False).agg(aggregations)
-    data = g.to_dict('r')
-    data = sorted(data, key=itemgetter('customer', 'item_name'))
+    if data:
+        group_columns = ["customer", "item_group", "item_name", "item_volume", "storage_charge_per_cubic_feet", "lts_storage_rate"]
+        aggregations = {
+                    "qty": "mean",
+                    "regular_storage_charge": "sum",
+                    "lts_qty": "mean",
+                    "lts_storage_charge": "sum",
+                    "total_storage_charge": "sum",
+        }
+        df = pd.DataFrame(data)
+        g = df.groupby(group_columns, as_index=False).agg(aggregations)
+        data = g.to_dict('r')
+        data = sorted(data, key=itemgetter('customer', 'item_name'))
     return data
 
 def get_storage_charge_items():

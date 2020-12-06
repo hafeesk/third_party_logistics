@@ -9,7 +9,6 @@ frappe.query_reports["Daily Storage Fees Analytics"] = {
       label: __("Customer"),
       fieldtype: "Link",
       options: "Customer",
-      default: "Cosmetica",
       reqd: 0,
     },
     {
