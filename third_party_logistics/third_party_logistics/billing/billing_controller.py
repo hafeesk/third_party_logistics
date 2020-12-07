@@ -261,14 +261,27 @@ def make_miscellaneous_charges_for_service_notes(from_date, to_date):
     return out
 
 def get_billing_details_pdf(filters):
+    print("-" * 100, filters.get("report_name"))
     context = dict(filters=filters, base_url=frappe.utils.get_site_url(frappe.local.site))
-
-    context["receiving_charges"] = get_receiving_charges(filters)
-    context["pick_and_pack_charges"] = get_pick_and_pack_charges(filters)
-    context["outbound_pallet_loading_charges"] = get_outbound_pallet_loading_charges(filters)
-    context["monthly_storage_fees"] = get_monthly_storage_fees(filters)
-    context["daily_storage_fees"] = get_daily_storage_fees(filters)
-    context["miscellaneous_service_charges"] = get_miscellaneous_services_charges(filters)
+    if not filters.get("report_name"):
+        context["receiving_charges"] = get_receiving_charges(filters)
+        context["pick_and_pack_charges"] = get_pick_and_pack_charges(filters)
+        context["outbound_pallet_loading_charges"] = get_outbound_pallet_loading_charges(filters)
+        context["monthly_storage_fees"] = get_monthly_storage_fees(filters)
+        context["daily_storage_fees"] = get_daily_storage_fees(filters)
+        context["miscellaneous_service_charges"] = get_miscellaneous_services_charges(filters)
+    else:
+        _map = dict({
+                "Receiving Charges": ("receiving_charges", get_receiving_charges),
+                "Pick and Pack Charges": ("pick_and_pack_charges", get_pick_and_pack_charges),
+                "Outbound Pallet Loading Charges": ("outbound_pallet_loading_charges", get_outbound_pallet_loading_charges),
+                "Monthly Storage Fees Analytics": ("monthly_storage_fees", get_monthly_storage_fees),
+                "Daily Storage Fees Analytics": ("daily_storage_fees", get_daily_storage_fees),
+                "Miscellaneous Services Charges": ("miscellaneous_service_charges", get_miscellaneous_services_charges),
+        })
+        for name, meth in _map.items():
+            if name == filters.get("report_name"):
+                context.setdefault(meth[0], meth[1](filters))
 
     template = "third_party_logistics/third_party_logistics/billing/billing_details.html"
     html = frappe.render_template(template, context)

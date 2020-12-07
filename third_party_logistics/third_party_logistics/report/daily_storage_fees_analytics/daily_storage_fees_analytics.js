@@ -37,17 +37,6 @@ frappe.query_reports["Daily Storage Fees Analytics"] = {
   ],
 
   onload(report) {
-    report.page.add_action_icon("fa fa-print", function () {
-      if (!report.get_filter_value("customer")) {
-        frappe.throw("Please select Customer for report.");
-        return;
-      }
-      let url =
-        "/api/method/third_party_logistics.third_party_logistics.billing.billing_controller.get_billing_details";
-      const args = {
-        filters: report.get_filter_values(),
-      };
-      open_url_post(url, args);
-    });
+    frappe.add_billing_details_link(report);
   },
 };

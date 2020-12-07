@@ -35,4 +35,8 @@ frappe.query_reports["Outbound Pallet Loading Charges"] = {
       hidden: 1,
     },
   ],
+
+  onload(report) {
+    frappe.add_billing_details_link(report);
+  },
 };
