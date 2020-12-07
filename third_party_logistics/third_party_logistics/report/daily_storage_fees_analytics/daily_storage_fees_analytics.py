@@ -64,9 +64,9 @@ def get_data(filters):
 
             # LTSF Calculation
             lts_storage_rate, lts_storage_charge = 0, 0
+            lts_storage_rate = get_item_rate(customer, storage_charge_items.default_long_term_fees_for_daily_cycle, item_rates)
             lts_qty = 0 if not d.bal_qty > d.in_qty else (d.bal_qty - d.in_qty)
             if lts_qty:
-                lts_storage_rate = get_item_rate(customer, storage_charge_items.default_long_term_storage_fees_for_daily_cycle, item_rates)
                 lts_storage_charge = lts_qty * lts_storage_rate
 
             item = dict(
@@ -109,7 +109,10 @@ def get_storage_charge_items():
     tpls = frappe.get_single("Third Party Logistics Settings")
     out = dict()
     for d in [
-        "default_daily_storage_per_cubic_feet_charge", "default_monthly_storage_per_cubic_feet", "default_long_term_fees_for_daily_cycle", "default_long_term_storage_fees_for_monthly_cycle"]:
+        "default_daily_storage_per_cubic_feet_charge",
+        "default_monthly_storage_per_cubic_feet",
+        "default_long_term_fees_for_daily_cycle",
+        "default_long_term_storage_fees_for_monthly_cycle"]:
         out[d] = tpls.get(d)
     return frappe._dict(out)
 
