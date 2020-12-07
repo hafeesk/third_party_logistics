@@ -289,3 +289,30 @@ def get_billing_details(filters):
     frappe.local.response.filecontent = content
     frappe.local.response.type = 'download'
     frappe.local.response.filename = fname
+
+
+def on_submit_sales_invoice(doc, method):
+    """Hook for Sales Invoice Submit"""
+    from third_party_logistics.third_party_logistics.billing.utils import update_invoiced_cf
+    update_invoiced_cf(doc, method)
+    make_storage_charge_log_ct(doc, method)
+
+def make_storage_charge_log_ct(doc, method):
+    filters = {
+        "from_date": doc.billing_from_date_cf,
+        "to_date": doc.billing_to_date_cf,
+        "customer": doc.customer,
+        "company": doc.company
+    }
+
+    for d in get_monthly_storage_fees(filters):
+        new_doc = frappe.new_doc("Storage Charge Log CT")
+        new_doc.update(d)
+        new_doc.insert(ignore_permissions=True)
+
+    for d in get_daily_storage_fees(filters):
+        new_doc = frappe.new_doc("Storage Charge Log CT")
+        new_doc.update(d)
+        new_doc.insert(ignore_permissions=True)
+
+    frappe.db.commit()

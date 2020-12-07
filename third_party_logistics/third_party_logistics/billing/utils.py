@@ -14,6 +14,20 @@ from erpnext import get_default_company
 from erpnext.accounts.party import get_party_details
 from erpnext.stock.get_item_details import get_price_list_rate_for
 
+
+def make_accounting_period(start_date, end_date, company):
+    """Creates an accounting period for the selected dates, so no backdated entries"""
+    new_doc = frappe.new_doc("Accounting Period")
+    new_doc.update({"start_date": start_date, "end_date": end_date, "company": company})
+    new_doc.closed_documents = []
+    for d in ["Sales Invoice", "Purchase Invoice", "Delivery Note", "Stock Entry"]:
+        new_doc.append("closed_documents", {
+            "document_type": d,
+            "closed": 1
+        })
+    new_doc.insert(ignore_permissions=True)
+
+
 def get_item_rate(customer, item_code, out):
     if out.get((customer, item_code)):
         return out.get((customer, item_code))
