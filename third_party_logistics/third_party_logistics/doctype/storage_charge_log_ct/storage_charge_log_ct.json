@@ -15,7 +15,11 @@
   "inventory",
   "total_cft_per_item",
   "rate_per_volume",
-  "storage_charge"
+  "storage_charge",
+  "lts_qty",
+  "lts_rate",
+  "lts_amount",
+  "total_storage_amount"
  ],
  "fields": [
   {
@@ -100,9 +104,29 @@
    "fieldtype": "Currency",
    "label": "Storage Charge",
    "read_only": 1
+  },
+  {
+   "fieldname": "lts_qty",
+   "fieldtype": "Float",
+   "label": "LTS Qty"
+  },
+  {
+   "fieldname": "lts_rate",
+   "fieldtype": "Currency",
+   "label": "LTS Rate"
+  },
+  {
+   "fieldname": "lts_amount",
+   "fieldtype": "Currency",
+   "label": "LTS Amount"
+  },
+  {
+   "fieldname": "total_storage_amount",
+   "fieldtype": "Currency",
+   "label": "Total Storage Amount"
   }
  ],
- "modified": "2020-09-30 04:15:45.599029",
+ "modified": "2020-12-06 22:29:27.257631",
  "modified_by": "Administrator",
  "module": "Third Party Logistics",
  "name": "Storage Charge Log CT",
