@@ -18,9 +18,9 @@ def execute(filters=None):
 
 def get_columns(filters):
     return [
-            dict(label=_("Customer"), fieldname="customer", fieldtype="Link/Customer", width=120),
+            dict(label=_("Customer"), fieldname="customer", fieldtype="Link", options="Customer", width=120),
             dict(label=_("Item Group"), fieldname="item_group", fieldtype="Data", width=120),
-            dict(label=_("Item"), fieldname="item_name", fieldtype="Data", width=120),
+            dict(label=_("Item"), fieldname="item_name", fieldtype="Link", options="Item", width=120),
             dict(label=_("Inventory as on To Date"), fieldname="qty", fieldtype="Float", width=120),
             dict(label=_("Item Volume"), fieldname="item_volume", fieldtype="Float", width=120),
             dict(label=_("Charge per Cubic Feet"), fieldname="storage_charge_per_cubic_feet", fieldtype="Currency", width=120),

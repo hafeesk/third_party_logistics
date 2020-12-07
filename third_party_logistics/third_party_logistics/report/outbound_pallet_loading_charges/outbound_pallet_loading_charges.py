@@ -10,8 +10,8 @@ def execute(filters=None):
 
 def get_columns(filters):
     return [
-        dict(label=_("Outbound Stock Entry#"), fieldname="name", fieldtype="Link/Stock Entry", width=160),
-        dict(label=_("Customer"), fieldname="customer_cf", width=200),
+        dict(label=_("Outbound Stock Entry#"), fieldname="name", fieldtype="Link", options="Stock Entry", width=160),
+        dict(label=_("Customer"), fieldname="customer_cf", fieldtype="Link", options="Customer", width=200),
         dict(label=_("Date"), fieldname="posting_date", width=120),
         dict(label=_("No of Pallets (A)"), fieldname="pallet_outbound_qty_cf", fieldtype='Float', width=100),
         dict(label=_("Qty on Pallet"), fieldname="each_pallet_qty_cf", width=220),

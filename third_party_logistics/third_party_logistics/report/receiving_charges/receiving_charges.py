@@ -14,8 +14,8 @@ def execute(filters=None):
 
 def get_columns(filters):
     return [
-        dict(label=_("Stock Entry#"), fieldname="name", fieldtype="Link/Stock Entry", width=160),
-        dict(label=_("Customer"), fieldname="customer_cf", width=200),
+        dict(label=_("Stock Entry#"), fieldname="name", fieldtype="Link", options="Stock Entry", width=160),
+        dict(label=_("Customer"), fieldname="customer_cf", fieldtype="Link", options="Customer", width=200),
         dict(label=_("Date"), fieldname="posting_date", width=120),
         dict(label=_("Received as Pallet/LC"), fieldname="received_as_cf", width=140),
         dict(label=_("No of Pallet/LC"), fieldname="pallet_lc_qty", width=120),

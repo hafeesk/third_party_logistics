@@ -13,7 +13,7 @@ def execute(filters=None):
 
 def get_columns(filters):
     return [
-        dict(label=_("Customer"), fieldname="customer", width=200),
+        dict(label=_("Customer"), fieldname="customer", fieldtype="Link", options="Customer", width=200),
         dict(label=_("No Of Orders"), fieldname="no_of_orders", fieldtype="Int", width=160),
         dict(label=_("Total Item Qty in Order"), fieldname="qty", fieldtype="Int", width=160),
     ]

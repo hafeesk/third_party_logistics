@@ -15,11 +15,11 @@ def execute(filters=None):
 
 def get_columns(filters):
     return [
-        dict(label="Service Note#", fieldname="name", fieldtype="Data", width=160),
-        dict(label="Customer#", fieldname="customer", fieldtype="Data", width=160),
+        dict(label="Service Note#", fieldname="name", fieldtype="Link", options="Service Note CT", width=160),
+        dict(label="Customer#", fieldname="customer", fieldtype="Link", options="Customer", width=160),
         dict(label="Date ", fieldname="posting_date", fieldtype="Date", width=160),
-        dict(label="Service", fieldname="item_code", fieldtype="", width=160),
-        dict(label="For Item", fieldname="for_item", fieldtype="", width=160),
+        dict(label="Service", fieldname="item_code", fieldtype="Link", options="Item", width=160),
+        dict(label="For Item", fieldname="for_item", fieldtype="Link", options="Item", width=160),
         dict(label="Qty", fieldname="qty", fieldtype="Int", width=160),
         dict(label="Rate", fieldname="rate", fieldtype="Currency", width=160),
         dict(label="Amount", fieldname="amount", fieldtype="Currency", width=160),
