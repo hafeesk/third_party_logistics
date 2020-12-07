@@ -14,12 +14,13 @@ from erpnext import get_default_company
 from erpnext.accounts.party import get_party_details
 from erpnext.stock.get_item_details import get_price_list_rate_for
 import importlib
-from third_party_logistics.third_party_logistics.billing.utils import get_customers_for_billing_cycle
+from third_party_logistics.third_party_logistics.billing.utils import get_customers_for_billing_cycle, get_carton_container_receiving_charge
 from third_party_logistics.third_party_logistics.report.monthly_storage_fees_analytics.monthly_storage_fees_analytics import get_invoice_items as get_invoice_items_for_monthly_cycle, get_data as get_monthly_storage_fees
 from third_party_logistics.third_party_logistics.report.daily_storage_fees_analytics.daily_storage_fees_analytics import get_invoice_items as get_invoice_items_for_daily_cycle, get_data as get_daily_storage_fees
 from third_party_logistics.third_party_logistics.report.receiving_charges.receiving_charges import get_data as get_receiving_charges
 from third_party_logistics.third_party_logistics.report.pick_and_pack_charges.pick_and_pack_charges import get_data as get_pick_and_pack_charges
 from third_party_logistics.third_party_logistics.report.outbound_pallet_loading_charges.outbound_pallet_loading_charges import get_data as get_outbound_pallet_loading_charges
+from third_party_logistics.third_party_logistics.report.miscellaneous_services_charges.miscellaneous_services_charges import get_data as get_miscellaneous_services_charges, get_invoice_items as get_invoice_items_for_misc_charges
 
 
 @frappe.whitelist()
@@ -38,6 +39,7 @@ def make_billing(from_date=None, to_date=None):
     billing_items.append(make_outbound_pallet_charges(from_date=from_date, to_date=to_date))
     billing_items.append(make_storage_charges_for_daily_billing(from_date=from_date, to_date=to_date))
     billing_items.append(make_storage_charges_for_monthly_billing(from_date=from_date, to_date=to_date))
+    billing_items.append(make_miscellaneous_charges_for_service_notes(from_date=from_date, to_date=to_date))
 
     # combine charges from all activities to make consolidated invoice per customer
     for charges in billing_items:
@@ -243,30 +245,20 @@ def make_order_fulfillment_charges(from_date=None, to_date=None):
         out[key] = [{"item_code": item_code, "qty": qty} for item_code, qty in lines.items()]
     return out
 
-def make_warehouse_service_charges_for_service_notes():
+def make_miscellaneous_charges_for_service_notes(from_date, to_date):
     """
     Other Miscellaneous Warehouse Services provided , to be picked from Service Notes
     """
-    frappe.db.commit()
+    company = get_default_company()
+    filters = get_filters(from_date, to_date)
 
-
-def get_carton_container_receiving_charge(customer, company, receiving_carton_item):
-    invoice = frappe.new_doc('Sales Invoice')
-    invoice.posting_date = getdate()
-    invoice.customer = customer
-    invoice.company = company
-    invoice.due_date = add_days(getdate(), 30)
-    items = [d[0] for d in frappe.db.get_list("Item", {"item_group": "Container"}, as_list=1)]
-    items.append(receiving_carton_item)
-    for d in items:
-        i = invoice.append("items")
-        i.item_code = d
-        i.qty = 1
-    invoice.insert()
-    rates = {a: b for a, b in [(d.item_code, d.rate) for d in invoice.items]}
-    invoice.delete()
-    return rates
-
+    out = defaultdict(list)
+    for customer in frappe.get_all("Customer"):
+        filters.update({"customer": customer.name, "company": company})
+        line_items = get_invoice_items_for_misc_charges(filters)
+        if line_items:
+            out[(customer.name, company)] = line_items
+    return out
 
 def get_billing_details_pdf(filters):
     context = dict(filters=filters, base_url=frappe.utils.get_site_url(frappe.local.site))
@@ -276,6 +268,7 @@ def get_billing_details_pdf(filters):
     context["outbound_pallet_loading_charges"] = get_outbound_pallet_loading_charges(filters)
     context["monthly_storage_fees"] = get_monthly_storage_fees(filters)
     context["daily_storage_fees"] = get_daily_storage_fees(filters)
+    context["miscellaneous_service_charges"] = get_miscellaneous_services_charges(filters)
 
     template = "third_party_logistics/third_party_logistics/billing/billing_details.html"
     html = frappe.render_template(template, context)

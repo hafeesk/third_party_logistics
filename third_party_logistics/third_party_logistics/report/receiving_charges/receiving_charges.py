@@ -30,7 +30,6 @@ def get_columns(filters):
 def get_data(filters):
     where_clause = get_conditions(filters)
 
-    from third_party_logistics.third_party_logistics.billing.billing_controller import get_carton_container_receiving_charge
     receiving_carton_item = frappe.db.get_value("Third Party Logistics Settings", None, "receiving_carton_item")
     receiving_pallet_item = frappe.db.get_value("Third Party Logistics Settings", None, "receiving_pallet_item")
 

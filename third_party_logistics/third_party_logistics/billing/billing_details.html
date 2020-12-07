@@ -57,6 +57,9 @@
     {% if outbound_pallet_loading_charges %}
     {% include "third_party_logistics/third_party_logistics/billing/outbound_pallet_loading_charges.html" %}
     {% endif %}
+    {% if miscellaneous_service_charges %}
+    {% include "third_party_logistics/third_party_logistics/billing/miscellaneous_service_charges.html" %}
+    {% endif %}
 </body>
 
 </html>

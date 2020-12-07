@@ -40,6 +40,13 @@ def get_customers_for_billing_cycle(cycle):
         return [d[0] for d in frappe.db.get_all("Customer", filters={"storage_billing_model_cf": cycle}, as_list=1)]
 
 
+def get_carton_container_receiving_charge(customer, company, receiving_carton_item):
+    items = [receiving_carton_item] + [d[0] for d in frappe.db.get_list("Item", {"item_group": "Container"}, as_list=1)]
+    out = defaultdict(float)
+    for d in items:
+        out[d] = get_item_rate(customer, d, {})
+    return out
+
 @frappe.whitelist()
 def uninvoice(from_date, to_date):
     '''

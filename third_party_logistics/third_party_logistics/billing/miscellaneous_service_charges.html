@@ -1,0 +1,52 @@
+{%- from  "third_party_logistics/third_party_logistics/billing/macros.html" import render_number, render_money -%}
+<div class="sub-heading">
+    Miscellaneous Service Charges
+    <span style="float:right">
+        Billing Period: {{filters.from_date}} to {{filters.to_date}}
+    </span>
+</div>
+<div style="page-break-after:always;">
+    <table class="pure-table pure-table-bordered">
+        <colgroup>
+            <col style="width:10%;">
+            <col style="width:10%;">
+            <col style="width:25%;">
+            <col style="width:15%;">
+            <col style="width:10%;">
+            <col style="width:10%;">
+            <col style="width:10%;">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>{{_("Service Note#")}}</th>
+                <th>{{_("Date")}}</th>
+                <th>{{_("Service")}}</th>
+                <th>{{_("For")}}</th>
+                <th>{{_("Qty")}}</th>
+                <th>{{_("Rate")}}</th>
+                <th>{{_("Amount")}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in miscellaneous_service_charges %}
+            <tr>
+                <td>{{ d.name }}</td>
+                <td>{{ d.posting_date }}</td>
+                <td>{{ d.item_code }}</td>
+                <td>{{ d.for_item }}</td>
+                <td class="text-right">{{ render_number(d.qty) }}</td>
+                <td class="text-right">{{ render_money(d.rate) }}</td>
+                <td class="text-right">{{ render_money(d.amount) }}</td>
+            </tr>
+            {% endfor %}
+            <!-- total line -->
+            {% if miscellaneous_service_charges %}
+            <tr class="text-bold">
+                <td colspan="6" class="text-right">Total Misc. Charges: </td>
+                {% set total = miscellaneous_service_charges | sum(attribute="amount") %}
+                <td class="text-right"> {{ frappe.format_value(total, currency="USD")}} </td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
