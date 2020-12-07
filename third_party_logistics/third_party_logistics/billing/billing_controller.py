@@ -311,6 +311,7 @@ def make_storage_charge_log_ct(doc, method):
         "billing_cycle": billing_cycle,
         "customer": d["customer"],
         "item": d["item_code"],
+        "item_group": d["item_group"],
         "length": d["length"],
         "width": d["width"],
         "height": d["height"],
