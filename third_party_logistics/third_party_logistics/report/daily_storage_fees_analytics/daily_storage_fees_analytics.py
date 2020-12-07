@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.utils import getdate, add_days, date_diff
-from third_party_logistics.third_party_logistics.billing.utils import get_item_rate
+from third_party_logistics.third_party_logistics.billing.utils import get_item_rate, get_item_details
 from erpnext.stock.report.stock_balance.stock_balance import execute as get_stock_balance
 from operator import itemgetter
 from dateutil.relativedelta import relativedelta
@@ -81,10 +81,17 @@ def get_data(filters):
                 lts_storage_rate=lts_storage_rate,
                 lts_storage_charge=lts_storage_charge,
                 total_storage_charge=regular_storage_charge + lts_storage_charge,
+                length=details.length_in_inch__cf,
+                width=details.width_in_inch_cf,
+                height=details.height_in_inch_cf,
+                item_code=details.item_code,
             )
             data.append(item)
     if data:
-        group_columns = ["customer", "item_group", "item_name", "item_volume", "storage_charge_per_cubic_feet", "lts_storage_rate"]
+        group_columns = ["customer", "item_group", "item_name",
+        "item_volume", "storage_charge_per_cubic_feet", "lts_storage_rate",
+        "length", "width", "height", "item_code",
+        ]
         aggregations = {
                     "qty": "mean",
                     "regular_storage_charge": "sum",
@@ -105,19 +112,6 @@ def get_storage_charge_items():
         "default_daily_storage_per_cubic_feet_charge", "default_monthly_storage_per_cubic_feet", "default_long_term_fees_for_daily_cycle", "default_long_term_storage_fees_for_monthly_cycle"]:
         out[d] = tpls.get(d)
     return frappe._dict(out)
-
-
-def get_item_details():
-    item_details = dict()
-    for d in frappe.db.sql("""
-    select 
-        item_code, volume_in_cubic_feet_cf, monthly_storage_charge_cf,
-        daily_storage_charge_cf, customer, is_customer_provided_item
-    from 
-        tabItem""", as_dict=True):
-        item_details.setdefault(d.item_code, d)
-    return item_details
-
 
 def get_conditions(filters):
     where_clause = []

@@ -27,6 +27,17 @@ def make_accounting_period(start_date, end_date, company):
         })
     new_doc.insert(ignore_permissions=True)
 
+def get_item_details():
+    item_details = dict()
+    for d in frappe.db.sql("""
+    select 
+        item_code, volume_in_cubic_feet_cf, monthly_storage_charge_cf,
+        daily_storage_charge_cf, customer, is_customer_provided_item,
+        length_in_inch__cf, width_in_inch_cf, height_in_inch_cf 
+    from 
+        tabItem""", as_dict=True):
+        item_details.setdefault(d.item_code, d)
+    return item_details
 
 def get_item_rate(customer, item_code, out):
     if out.get((customer, item_code)):

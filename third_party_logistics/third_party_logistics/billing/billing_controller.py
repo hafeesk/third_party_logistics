@@ -305,14 +305,36 @@ def make_storage_charge_log_ct(doc, method):
         "company": doc.company
     }
 
+    def _get_mapped_doc(d, billing_cycle):
+        return {
+        "date": getdate(),
+        "billing_cycle": billing_cycle,
+        "customer": d["customer"],
+        "item": d["item_code"],
+        "length": d["length"],
+        "width": d["width"],
+        "height": d["height"],
+        "cft_per_unit": d["item_volume"],
+        "inventory": d["qty"],
+        "total_cft_per_item": d["item_volume"] * d["qty"],
+        "rate_per_volume": d["storage_charge_per_cubic_feet"],
+        "storage_charge": d["regular_storage_charge"],
+        "lts_qty": d["lts_storage_rate"],
+        "lts_rate": d["lts_storage_rate"],
+        "lts_amount": d["lts_storage_charge"],
+        "total_storage_amount": d["total_storage_charge"]
+        }
+
     for d in get_monthly_storage_fees(filters):
         new_doc = frappe.new_doc("Storage Charge Log CT")
-        new_doc.update(d)
+        new_doc.update(_get_mapped_doc(d, "Monthly"))
         new_doc.insert(ignore_permissions=True)
 
     for d in get_daily_storage_fees(filters):
+        # print("#" * 10)
+        # print(d)
         new_doc = frappe.new_doc("Storage Charge Log CT")
-        new_doc.update(d)
+        new_doc.update(_get_mapped_doc(d, "Daily"))
         new_doc.insert(ignore_permissions=True)
 
     frappe.db.commit()
