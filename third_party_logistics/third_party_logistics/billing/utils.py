@@ -47,6 +47,38 @@ def get_carton_container_receiving_charge(customer, company, receiving_carton_it
         out[d] = get_item_rate(customer, d, {})
     return out
 
+def update_invoiced_cf(doc, method):
+    frappe.db.sql("""
+    update
+        `tabStock Entry` set invoiced_cf = 1
+    where
+        stock_entry_type in ('Material Receipt', 'Material Issue')
+        and invoiced_cf = 0
+        and posting_date between %(from_date)s and %(to_date)s
+        and customer_cf = %(customer)s
+    """, dict(from_date=doc.billing_from_date_cf, to_date=doc.billing_to_date_cf, customer=doc.customer), )
+
+    frappe.db.sql("""
+    update
+        `tabService Note CT` set invoiced = 1
+    where
+        docstatus = 1
+        and invoiced = 0
+        and posting_date between %(from_date)s and %(to_date)s
+        and customer = %(customer)s
+    """, dict(from_date=doc.billing_from_date_cf, to_date=doc.billing_to_date_cf, customer=doc.customer), )
+
+    frappe.db.sql("""
+    update
+        `tabSales Order` set invoiced_cf = 1
+    where
+        docstatus = 1
+        and invoiced_cf = 0
+        and transaction_date between %(from_date)s and %(to_date)s
+        and customer = %(customer)s
+    """, dict(from_date=doc.billing_from_date_cf, to_date=doc.billing_to_date_cf, customer=doc.customer), )
+
+
 @frappe.whitelist()
 def uninvoice(from_date, to_date):
     '''
@@ -58,7 +90,7 @@ def uninvoice(from_date, to_date):
     update
         `tabStock Entry` set invoiced_cf = 0
     where
-        stock_entry_type = 'Material Receipt'
+        stock_entry_type in ('Material Receipt', 'Material Issue')
         and invoiced_cf = 1
         and posting_date between %(from_date)s and %(to_date)s
         and customer_cf is not null
@@ -72,25 +104,14 @@ def uninvoice(from_date, to_date):
         and invoiced_cf = 1
         and transaction_date between %(from_date)s and %(to_date)s
     """, filters)
-    frappe.db.commit()
-
-
-def update_invoiced_cf(doc, method):
-    frappe.db.sql("""
-    update
-        `tabStock Entry` set invoiced_cf = 1
-    where
-        stock_entry_type = 'Material Receipt'
-        and invoiced_cf = 0
-        and posting_date between %(from_date)s and %(to_date)s
-        and customer_cf is not null
-    """, dict(from_date=doc.billing_from_date_cf, to_date=doc.billing_to_date_cf), )
 
     frappe.db.sql("""
     update
-        `tabSales Order` set invoiced_cf = 1
+        `tabService Note CT` set invoiced = 0
     where
         docstatus = 1
-        and invoiced_cf = 0
-        and transaction_date between %(from_date)s and %(to_date)s
-    """, dict(from_date=doc.billing_from_date_cf, to_date=doc.billing_to_date_cf), )
+        and invoiced = 1
+        and posting_date between %(from_date)s and %(to_date)s
+    """, filters)
+
+    frappe.db.commit()
