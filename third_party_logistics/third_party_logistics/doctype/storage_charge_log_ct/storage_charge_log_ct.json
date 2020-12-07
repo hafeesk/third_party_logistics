@@ -7,6 +7,7 @@
   "customer",
   "billing_cycle",
   "item",
+  "item_group",
   "date",
   "length",
   "width",
@@ -124,9 +125,16 @@
    "fieldname": "total_storage_amount",
    "fieldtype": "Currency",
    "label": "Total Storage Amount"
+  },
+  {
+   "fetch_from": "item.item_group",
+   "fieldname": "item_group",
+   "fieldtype": "Link",
+   "label": "Item Group",
+   "options": "Item Group"
   }
  ],
- "modified": "2020-12-06 22:29:27.257631",
+ "modified": "2020-12-06 23:34:47.252383",
  "modified_by": "Administrator",
  "module": "Third Party Logistics",
  "name": "Storage Charge Log CT",
