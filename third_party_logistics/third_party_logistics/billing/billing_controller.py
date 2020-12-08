@@ -284,16 +284,24 @@ def get_billing_details_pdf(filters):
                 context.setdefault(meth[0], meth[1](filters))
 
     template = "third_party_logistics/third_party_logistics/billing/billing_details.html"
+    base_template_path = "frappe/www/printview.html"
+
+    from frappe.www.printview import get_letter_head
+    letter_head = get_letter_head({}, 0)
+
+    context.setdefault("letter_head", letter_head.get('content', None))
+    context.setdefault("footer", letter_head.get('footer', None))
     html = frappe.render_template(template, context)
+    final_template = frappe.render_template(base_template_path, {"body": html, "title": "Billing Details"})
     options = {
         "margin-left": "3mm",
         "margin-right": "3mm",
-        "margin-top": "50mm",
-        "margin-bottom": "40mm",
+        "margin-top": "0mm",
+        "margin-bottom": "20mm",
         "orientation": "Landscape"
     }
     fname = "{customer}_Billing_Detail_{from_date}_to_{to_date}.pdf".format(**filters)
-    return fname, get_pdf(html, options=options)
+    return fname, get_pdf(final_template, options=options)
 
 @frappe.whitelist()
 def get_billing_details(filters):

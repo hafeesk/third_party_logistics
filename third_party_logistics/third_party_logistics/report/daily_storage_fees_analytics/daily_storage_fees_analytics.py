@@ -66,8 +66,7 @@ def get_data(filters):
             lts_storage_rate, lts_storage_charge = 0, 0
             lts_storage_rate = get_item_rate(customer, storage_charge_items.default_long_term_fees_for_daily_cycle, item_rates)
             lts_qty = 0 if not d.bal_qty > d.in_qty else (d.bal_qty - d.in_qty)
-            if lts_qty:
-                lts_storage_charge = lts_qty * lts_storage_rate
+            lts_storage_charge = lts_qty * lts_storage_rate
 
             item = dict(
                 customer=details.customer,

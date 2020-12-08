@@ -41,25 +41,40 @@
 </style>
 
 <body>
-    <center>
-        <h4> Customer: {{filters.customer or "" }} </h4>
-    </center>
-    {% if monthly_storage_fees %}
-    {% include "third_party_logistics/third_party_logistics/billing/storage_charges_for_monthly_billing.html" %}
-    {% endif %}
-    {% if daily_storage_fees %}
-    {% include "third_party_logistics/third_party_logistics/billing/storage_charges_for_daily_billing.html" %}
-    {% endif %}
-    {% if receiving_charges %}
-    {% include "third_party_logistics/third_party_logistics/billing/receiving_charges.html" %} {% endif %}
-    {% if pick_and_pack_charges %}
-    {% include "third_party_logistics/third_party_logistics/billing/pick_and_pack_charges.html" %} {% endif %}
-    {% if outbound_pallet_loading_charges %}
-    {% include "third_party_logistics/third_party_logistics/billing/outbound_pallet_loading_charges.html" %}
-    {% endif %}
-    {% if miscellaneous_service_charges %}
-    {% include "third_party_logistics/third_party_logistics/billing/miscellaneous_service_charges.html" %}
-    {% endif %}
+    <div class="page-break">
+        <div class="letter-head">{{ letter_head }}</div>
+
+        <div id="footer-html" class="visible-pdf">
+            <div class="letter-head-footer">
+                {{ footer }}
+            </div>
+            <p class="text-center small page-number visible-pdf">
+                {{ _("Page {0} of {1}").format('<span class="page"></span>', '<span class="topage"></span>') }}
+            </p>
+        </div>
+
+
+        <center>
+            <h4> Customer: {{filters.customer or "" }} </h4>
+        </center>
+        {% if monthly_storage_fees %}
+        {% include "third_party_logistics/third_party_logistics/billing/storage_charges_for_monthly_billing.html" %}
+        {% endif %}
+        {% if daily_storage_fees %}
+        {% include "third_party_logistics/third_party_logistics/billing/storage_charges_for_daily_billing.html" %}
+        {% endif %}
+        {% if receiving_charges %}
+        {% include "third_party_logistics/third_party_logistics/billing/receiving_charges.html" %} {% endif %}
+        {% if pick_and_pack_charges %}
+        {% include "third_party_logistics/third_party_logistics/billing/pick_and_pack_charges.html" %} {% endif %}
+        {% if outbound_pallet_loading_charges %}
+        {% include "third_party_logistics/third_party_logistics/billing/outbound_pallet_loading_charges.html" %}
+        {% endif %}
+        {% if miscellaneous_service_charges %}
+        {% include "third_party_logistics/third_party_logistics/billing/miscellaneous_service_charges.html" %}
+        {% endif %}
+    </div>
+
 </body>
 
 </html>
