@@ -61,6 +61,21 @@ def get_item_rate(customer, item_code, out):
     out.setdefault((customer, item_code), rate)
     return rate
 
+def get_default_price_list(customer, company):
+    company = company or get_default_company()
+    default_price_list = frappe.db.sql("""
+    select 
+        COALESCE(cu.default_price_list,cug.default_price_list,sing.value) price_list
+    from 
+        tabCustomer cu
+        inner join `tabCustomer Group` cug on cug.name = cu.customer_group
+        cross join tabSingles sing on sing.field = 'selling_price_list'
+        and sing.doctype = 'Selling Settings'
+    where
+        cu.name=%s""", (customer,))
+    return default_price_list and default_price_list[0][0] or None
+
+
 def get_customers_for_billing_cycle(cycle):
         return [d[0] for d in frappe.db.get_all("Customer", filters={"storage_billing_model_cf": cycle}, as_list=1)]
 
