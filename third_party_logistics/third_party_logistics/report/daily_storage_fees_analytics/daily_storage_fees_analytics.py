@@ -21,6 +21,7 @@ def get_columns(filters):
             dict(label=_("Customer"), fieldname="customer", fieldtype="Link", options="Customer", width=120),
             dict(label=_("Item Group"), fieldname="item_group", fieldtype="Data", width=120),
             dict(label=_("Item"), fieldname="item_name", fieldtype="Link", options="Item", width=120),
+            dict(label=_("No of Days"), fieldname="no_days", fieldtype="Int", width=70),
             dict(label=_("Avg. Inventory"), fieldname="qty", fieldtype="Float", width=120),
             dict(label=_("Item Volume"), fieldname="item_volume", fieldtype="Float", width=120),
             dict(label=_("Charge per Cubic Feet"), fieldname="storage_charge_per_cubic_feet", fieldtype="Currency", width=120),
@@ -38,8 +39,10 @@ def get_data(filters):
     customers = get_customers_for_billing_cycle("Daily")
     data = []
 
+    no_days = date_diff(filters["to_date"], filters["from_date"]) + 1
+
     stock_filters = copy.deepcopy(filters)
-    for n in range(date_diff(filters["to_date"], filters["from_date"]) + 1):
+    for n in range(no_days):
         curr_date = add_days(filters["from_date"], n)
         stock_filters.update({
             "to_date": curr_date,
@@ -75,6 +78,7 @@ def get_data(filters):
                 customer=details.customer,
                 item_group=d.item_group,
                 item_name=d.item_name,
+                no_days=no_days,
                 qty=d.bal_qty,
                 item_volume=details.volume_in_cubic_feet_cf,
                 storage_charge_per_cubic_feet=storage_charge_per_cubic_feet,
@@ -90,7 +94,7 @@ def get_data(filters):
             )
             data.append(item)
     if data:
-        group_columns = ["customer", "item_group", "item_name",
+        group_columns = ["customer", "item_group", "item_name", "no_days",
         "item_volume", "storage_charge_per_cubic_feet", "lts_storage_rate",
         "length", "width", "height", "item_code",
         ]
