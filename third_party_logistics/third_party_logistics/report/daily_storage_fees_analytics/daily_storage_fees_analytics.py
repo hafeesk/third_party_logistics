@@ -21,11 +21,11 @@ def get_columns(filters):
             dict(label=_("Customer"), fieldname="customer", fieldtype="Link", options="Customer", width=120),
             dict(label=_("Item Group"), fieldname="item_group", fieldtype="Data", width=120),
             dict(label=_("Item"), fieldname="item_name", fieldtype="Link", options="Item", width=120),
-            dict(label=_("Inventory as on To Date"), fieldname="qty", fieldtype="Float", width=120),
+            dict(label=_("Avg. Inventory"), fieldname="qty", fieldtype="Float", width=120),
             dict(label=_("Item Volume"), fieldname="item_volume", fieldtype="Float", width=120),
             dict(label=_("Charge per Cubic Feet"), fieldname="storage_charge_per_cubic_feet", fieldtype="Currency", width=120),
             dict(label=_("Regular Storage Charge"), fieldname="regular_storage_charge", fieldtype="Currency", width=120),
-            dict(label=_("LTS Qty"), fieldname="lts_qty", fieldtype="Float", width=120),
+            dict(label=_("Avg. LTS Qty"), fieldname="lts_qty", fieldtype="Float", width=120),
             dict(label=_("LTS Rate"), fieldname="lts_storage_rate", fieldtype="Currency", width=120),
             dict(label=_("Long Term Storage Charge"), fieldname="lts_storage_charge", fieldtype="Currency", width=120),
             dict(label=_("Total Charge"), fieldname="total_storage_charge", fieldtype="Currency", width=120),
@@ -49,6 +49,9 @@ def get_data(filters):
         for d in [frappe._dict(x) for x in stock_balance]:
             details = item_details.get(d.item_code)
 
+            # if not details.item_code == "Powerbank":
+            #     continue
+
             # skip non customer items
             customer = filters.get("customer")
             # apply customer filter if set
@@ -66,7 +69,7 @@ def get_data(filters):
             lts_storage_rate, lts_storage_charge = 0, 0
             lts_storage_rate = get_item_rate(customer, storage_charge_items.default_long_term_fees_for_daily_cycle, item_rates)
             lts_qty = 0 if not d.bal_qty > d.in_qty else (d.bal_qty - d.in_qty)
-            lts_storage_charge = lts_qty * lts_storage_rate
+            lts_storage_charge = lts_qty * details.volume_in_cubic_feet_cf * lts_storage_rate
 
             item = dict(
                 customer=details.customer,
