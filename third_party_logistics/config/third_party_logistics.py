@@ -153,6 +153,15 @@ def get_data():
           "doctype": "Stock Entry",
           "description": "Daily Storage Fees Analytics",
           "route": "#query-report/Daily Storage Fees Analytics"
+        },
+                {
+          "type": "report",
+          "name": "Miscellaneous Services Charges",
+          "label": "Miscellaneous Services Charges",
+          "is_query_report": True,
+          "doctype": "Service Note CT",
+          "description": "Miscellaneous Services Charges",
+          "route": "#query-report/Miscellaneous Services Charges"
         }
 
 
