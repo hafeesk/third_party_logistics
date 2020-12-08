@@ -34,6 +34,12 @@ frappe.query_reports["Daily Storage Fees Analytics"] = {
       reqd: 1,
       hidden: 1,
     },
+    {
+      fieldname: "grouped",
+      label: __("Group Days"),
+      fieldtype: "Check",
+      default: 1,
+    },
   ],
 
   onload(report) {
