@@ -14,7 +14,7 @@ def get_columns(filters):
         dict(label=_("Customer"), fieldname="customer_cf", fieldtype="Link", options="Customer", width=200),
         dict(label=_("Date"), fieldname="posting_date", width=120),
         dict(label=_("No of Pallets (A)"), fieldname="pallet_outbound_qty_cf", fieldtype='Float', width=100),
-        dict(label=_("Qty on Pallet"), fieldname="each_pallet_qty_cf", width=220),
+        dict(label=_("Qty on Each Pallet"), fieldname="each_pallet_qty_cf", width=220),
         dict(label=_("Tracking Number"), fieldname="tracking_number_cf", width=120),
         dict(label=_("Total Outbound Pallet Loading Charge(A * Charge) + Outbound Freight * Markup Percent"),
         fieldname="total_outbound_freight_charge", fieldtype='Currency', width=120),
