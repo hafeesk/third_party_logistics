@@ -36,7 +36,7 @@ def get_data(filters):
         and it.pick_and_pack_charge_cf is null
     where
         so.docstatus = 1
-        and so.invoiced_cf = 0
+        -- and so.invoiced_cf = 0
         and so.transaction_date between %(from_date)s and %(to_date)s
         {where_clause}
     group by so.customer, so.company, so.name, so.transaction_date
@@ -51,7 +51,7 @@ union all
         and it.pick_and_pack_charge_cf is not null
     where
         so.docstatus = 1
-        and so.invoiced_cf = 0
+        -- and so.invoiced_cf = 0
         and so.transaction_date between %(from_date)s and %(to_date)s
         {where_clause}
     group by so.customer, so.company, so.name, so.transaction_date, it.pick_and_pack_charge_cf
