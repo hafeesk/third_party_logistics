@@ -9,6 +9,13 @@ frappe.query_reports["Daily Storage Fees Analytics"] = {
       label: __("Customer"),
       fieldtype: "Link",
       options: "Customer",
+      get_query: function () {
+        return {
+          filters: {
+            storage_billing_model_cf: "Daily",
+          },
+        };
+      },
       reqd: 0,
     },
     {
@@ -36,7 +43,7 @@ frappe.query_reports["Daily Storage Fees Analytics"] = {
     },
     {
       fieldname: "grouped",
-      label: __("Group Days"),
+      label: __("Group By Days"),
       fieldtype: "Check",
       default: 1,
     },

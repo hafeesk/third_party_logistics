@@ -9,8 +9,14 @@ frappe.query_reports["Monthly Storage Fees Analytics"] = {
       label: __("Customer"),
       fieldtype: "Link",
       options: "Customer",
-      default: "EPIC",
       reqd: 0,
+      get_query: function () {
+        return {
+          filters: {
+            storage_billing_model_cf: "Monthly",
+          },
+        };
+      },
     },
     {
       fieldname: "from_date",
