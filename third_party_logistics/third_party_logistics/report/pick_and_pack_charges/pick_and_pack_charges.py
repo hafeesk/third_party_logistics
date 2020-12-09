@@ -17,7 +17,7 @@ def get_columns(filters):
         dict(label=_("Sales Order#"), fieldname="name", fieldtype="Link", options="Sales Order", width=160),
         dict(label=_("Date"), fieldname="transaction_date", width=120),
         dict(label=_("Per Order Charge (A)"), fieldname="per_order_charge", fieldtype='Currency', width=100),
-        dict(label=_("Total Item Qty (B)"), fieldname="total_item_qty", fieldtype='Float', width=120),
+        dict(label=_("Total Item Qty (B)"), fieldname="total_item_qty", fieldtype='Int', width=120),
         dict(label=_("Per Item Charge (C)"), fieldname="per_item_charge", fieldtype='Currency', width=120),
         dict(label=_("Total Pick & Pack Charge [A+(B*C)]"), fieldname="total_pick_and_pack_charge", fieldtype='Currency', width=120),
         dict(label=_("Invoiced"), fieldname="invoiced_cf", fieldtype="Check", width=80),

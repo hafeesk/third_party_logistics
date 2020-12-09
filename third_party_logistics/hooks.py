@@ -82,6 +82,9 @@ doctype_list_js = {"Stock Entry": "public/js/stock_entry_list.js"}
 doc_events = {
 	"Sales Invoice": {
 		"on_submit": "third_party_logistics.third_party_logistics.billing.billing_controller.on_submit_sales_invoice"
+	},
+	"Item": {
+		"validate": "third_party_logistics.third_party_logistics.billing.utils.on_validate_item"
 	}
 }
 

@@ -1,8 +1,17 @@
 frappe.ui.form.on("Stock Entry", {
   stock_entry_type: function (frm) {
-    let reqd = frm.doc.stock_entry_type == "Material Receipt";
-    frm.toggle_reqd("customer_cf", reqd);
-    frm.toggle_reqd("received_as_cf", reqd);
+    frm.toggle_reqd(
+      "customer_cf",
+      ["Material Receipt", "Material Issue"].includes(frm.doc.stock_entry_type)
+    );
+    frm.toggle_reqd(
+      "received_as_cf",
+      ["Material Receipt"].includes(frm.doc.stock_entry_type)
+    );
+    frm.toggle_reqd(
+      "pallet_outbound_qty_cf",
+      ["Material Issue"].includes(frm.doc.stock_entry_type)
+    );
   },
 
   received_as_cf: function (frm) {
@@ -34,6 +43,15 @@ frappe.ui.form.on("Stock Entry", {
 
   validate: function (frm) {
     let messages = [];
+    if (frm.doc.stock_entry_type == "Material Issue") {
+      if (!frm.doc.customer_cf) {
+        messages.push("Please select a 'For Customer' ");
+      }
+      if (!frm.doc.pallet_outbound_qty_cf) {
+        messages.push("Please set the Outbound Pallet Qty");
+      }
+    }
+
     if (frm.doc.stock_entry_type == "Material Receipt") {
       if (!frm.doc.customer_cf) {
         messages.push("Please select a 'For Customer' ");
@@ -50,10 +68,11 @@ frappe.ui.form.on("Stock Entry", {
           }
         }
       }
-      if (messages.length) {
-        frappe.msgprint(__(messages.join("\n")));
-        frappe.validated = 0;
-      }
+    }
+
+    if (messages.length) {
+      frappe.msgprint(__(messages.join("\n")));
+      frappe.validated = 0;
     }
   },
 });

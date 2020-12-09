@@ -60,9 +60,8 @@ def get_data(filters):
         # LTSF Calculation
         lts_storage_rate, lts_storage_charge = 0, 0
         lts_qty = 0 if not d.bal_qty > d.in_qty else (d.bal_qty - d.in_qty)
-        if lts_qty:
-            lts_storage_rate = get_item_rate(customer, storage_charge_items.default_long_term_storage_fees_for_monthly_cycle, item_rates)
-            lts_storage_charge = lts_qty * lts_storage_rate
+        lts_storage_rate = get_item_rate(customer, storage_charge_items.default_long_term_storage_fees_for_monthly_cycle, item_rates)
+        lts_storage_charge = lts_qty * details.volume_in_cubic_feet_cf * lts_storage_rate
 
         item = dict(
             customer=details.customer,

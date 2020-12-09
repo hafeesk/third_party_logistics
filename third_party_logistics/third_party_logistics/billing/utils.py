@@ -15,6 +15,9 @@ from erpnext.accounts.party import get_party_details
 from erpnext.stock.get_item_details import get_price_list_rate_for
 
 
+def on_validate_item(doc, method):
+    doc.volume_in_cubic_feet_cf = doc.length_in_inch__cf * doc.width_in_inch_cf * doc.height_in_inch_cf / 1728
+
 def make_accounting_period(start_date, end_date, company):
     """Creates an accounting period for the selected dates, so no backdated entries"""
     new_doc = frappe.new_doc("Accounting Period")
