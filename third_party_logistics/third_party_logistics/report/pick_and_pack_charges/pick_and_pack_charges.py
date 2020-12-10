@@ -27,7 +27,7 @@ def get_data(filters):
     where_clause = get_conditions(filters)
     data = frappe.db.sql("""
         select
-        so.customer, so.company, so.name, so.transaction_date, sum(soi.qty) total_item_qty,
+        so.customer, so.company, so.name, so.transaction_date, so.invoiced_cf, sum(soi.qty) total_item_qty,
         null item
     from
         `tabSales Order` so
@@ -36,13 +36,12 @@ def get_data(filters):
         and it.pick_and_pack_charge_cf is null
     where
         so.docstatus = 1
-        -- and so.invoiced_cf = 0
         and so.transaction_date between %(from_date)s and %(to_date)s
         {where_clause}
-    group by so.customer, so.company, so.name, so.transaction_date
+    group by so.customer, so.company, so.name, so.transaction_date, so.invoiced_cf
 union all
     select
-        so.customer, so.company, so.name, so.transaction_date, sum(soi.qty) total_item_qty,
+        so.customer, so.company, so.name, so.transaction_date, so.invoiced_cf, sum(soi.qty) total_item_qty,
         pick_and_pack_charge_cf item
     from
         `tabSales Order` so
@@ -51,10 +50,9 @@ union all
         and it.pick_and_pack_charge_cf is not null
     where
         so.docstatus = 1
-        -- and so.invoiced_cf = 0
         and so.transaction_date between %(from_date)s and %(to_date)s
         {where_clause}
-    group by so.customer, so.company, so.name, so.transaction_date, it.pick_and_pack_charge_cf
+    group by so.customer, so.company, so.name, so.transaction_date, so.invoiced_cf, it.pick_and_pack_charge_cf
     order by customer, transaction_date""".format(where_clause=where_clause), filters, as_dict=True)
 
     fulfilment_charge_per_order = frappe.db.get_value("Third Party Logistics Settings", None, "fulfilment_charge_per_order_cf")

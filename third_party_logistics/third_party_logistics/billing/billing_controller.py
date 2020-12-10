@@ -14,7 +14,7 @@ from erpnext import get_default_company
 from erpnext.accounts.party import get_party_details
 from erpnext.stock.get_item_details import get_price_list_rate_for
 import importlib
-from third_party_logistics.third_party_logistics.billing.utils import get_customers_for_billing_cycle, get_carton_container_receiving_charge, get_default_price_list
+from third_party_logistics.third_party_logistics.billing.utils import (get_customers_for_billing_cycle, get_carton_container_receiving_charge, get_default_price_list, uninvoice)
 from third_party_logistics.third_party_logistics.report.monthly_storage_fees_analytics.monthly_storage_fees_analytics import get_invoice_items as get_invoice_items_for_monthly_cycle, get_data as get_monthly_storage_fees
 from third_party_logistics.third_party_logistics.report.daily_storage_fees_analytics.daily_storage_fees_analytics import get_invoice_items as get_invoice_items_for_daily_cycle, get_data as get_daily_storage_fees
 from third_party_logistics.third_party_logistics.report.receiving_charges.receiving_charges import get_data as get_receiving_charges
@@ -374,3 +374,7 @@ def make_storage_charge_log_ct(doc, method):
         new_doc.insert(ignore_permissions=True)
 
     frappe.db.commit()
+
+
+def on_cancel_sales_invoice(doc, method):
+    uninvoice(doc.billing_from_date_cf, doc.billing_to_date_cf, doc.customer)

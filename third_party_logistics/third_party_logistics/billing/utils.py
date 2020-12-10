@@ -129,12 +129,14 @@ def update_invoiced_cf(doc, method):
 
 
 @frappe.whitelist()
-def uninvoice(from_date, to_date):
+def uninvoice(from_date, to_date, customer=None):
     '''
     Set invoiced_cf to 0, for use in testing
     to recreate billing
     '''
-    filters = dict(from_date=from_date, to_date=to_date)
+    filters = dict(from_date=from_date, to_date=to_date, customer=customer)
+    where_clause = customer and " and customer_cf = %(customer)s" or ""
+
     frappe.db.sql("""
     update
         `tabStock Entry` set invoiced_cf = 0
@@ -143,8 +145,10 @@ def uninvoice(from_date, to_date):
         and invoiced_cf = 1
         and posting_date between %(from_date)s and %(to_date)s
         and customer_cf is not null
-    """, filters)
+        {where_clause}
+    """.format(where_clause=where_clause), filters)
 
+    where_clause = customer and " and customer = %(customer)s" or ""
     frappe.db.sql("""
     update
         `tabSales Order` set invoiced_cf = 0
@@ -152,7 +156,8 @@ def uninvoice(from_date, to_date):
         docstatus = 1
         and invoiced_cf = 1
         and transaction_date between %(from_date)s and %(to_date)s
-    """, filters)
+        {where_clause}
+    """.format(where_clause=where_clause), filters)
 
     frappe.db.sql("""
     update
@@ -161,6 +166,7 @@ def uninvoice(from_date, to_date):
         docstatus = 1
         and invoiced = 1
         and posting_date between %(from_date)s and %(to_date)s
-    """, filters)
+        {where_clause}
+    """.format(where_clause=where_clause), filters)
 
     frappe.db.commit()
