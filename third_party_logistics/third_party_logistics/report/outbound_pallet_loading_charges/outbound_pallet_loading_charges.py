@@ -27,7 +27,7 @@ def get_data(filters):
     data = frappe.db.sql("""
     select 
         ste.name, ste.customer_cf, ste.company, ste.posting_date,
-        ste.tracking_number_cf, 
+        ste.tracking_number_cf, ste.invoiced_cf,
         concat("/",ste.each_pallet_qty_cf) each_pallet_qty_cf,
         round(ste.pallet_outbound_qty_cf,2) pallet_outbound_qty_cf,
         0 pallet_loading_charge,
