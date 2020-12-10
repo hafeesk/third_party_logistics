@@ -6,11 +6,17 @@
         Billing Period: {{filters.from_date}} to {{filters.to_date}}
     </span>
 </div>
+
+{% if daily_storage_fees_grouped %}
 <div style="page-break-after:always;">
+    <div>
+        <h4>Itemwise Summary for the month</h4>
+    </div>
     <table class="pure-table pure-table-bordered">
         <colgroup>
             <col style="width:15%;">
             <col style="width:15%;">
+            <col style="width:8%;">
             <col style="width:8%;">
             <col style="width:8%;">
             <col style="width:8%;">
@@ -24,21 +30,23 @@
             <tr>
                 <th>Item Group</th>
                 <th>Item</th>
-                <th>Inventory as on end Date of Month</th>
+                <th>No of Days</th>
+                <th>Avg. Inventory</th>
                 <th>Item Volume</th>
                 <th>Charge per Cubic Feet</th>
                 <th>Regular Storage Charge</th>
-                <th>LTS Qty</th>
+                <th>Avg. LTS Qty</th>
                 <th>LTS Rate</th>
                 <th>Long Term Storage Charge</th>
                 <th>Total Charge</th>
             </tr>
         </thead>
         <tbody>
-            {% for d in daily_storage_fees %}
+            {% for d in daily_storage_fees_grouped %}
             <tr>
                 <td>{{d.item_group}}</td>
                 <td>{{d.item_name}}</td>
+                <td class="text-right">{{ render_number(d.no_days)}}</td>
                 <td class="text-right">{{ render_number(d.qty)}}</td>
                 <td class="text-right">{{render_number(d.item_volume)}}</td>
                 <td class="text-right">{{render_money(d.storage_charge_per_cubic_feet)}}</td>
@@ -60,3 +68,65 @@
         </tbody>
     </table>
 </div>
+{% endif %}
+{% if daily_storage_fees %}
+<div style="page-break-after:always;">
+    <div>
+        <h4>Itemwise Daily Charge for the month</h4>
+    </div>
+    <table class="pure-table pure-table-bordered">
+        <colgroup>
+            <col style="width:15%;">
+            <col style="width:15%;">
+            <col style="width:8%;">
+            <col style="width:8%;">
+            <col style="width:8%;">
+            <col style="width:8%;">
+            <col style="width:8%;">
+            <col style="width:8%;">
+            <col style="width:8%;">
+            <col style="width:15%;">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Item Group</th>
+                <th>Item</th>
+                <th>Date</th>
+                <th>Inventory as on date</th>
+                <th>Item Volume</th>
+                <th>Charge per Cubic Feet</th>
+                <th>Regular Storage Charge</th>
+                <th>LTS Qty</th>
+                <th>LTS Rate</th>
+                <th>Long Term Storage Charge</th>
+                <th>Total Charge</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in daily_storage_fees %}
+            <tr>
+                <td>{{d.item_group}}</td>
+                <td>{{d.item_name}}</td>
+                <td>{{d.date}}</td>
+                <td class="text-right">{{ render_number(d.qty)}}</td>
+                <td class="text-right">{{render_number(d.item_volume)}}</td>
+                <td class="text-right">{{render_money(d.storage_charge_per_cubic_feet)}}</td>
+                <td class="text-right">{{render_money(d.regular_storage_charge)}}</td>
+                <td class="text-right">{{render_number(d.lts_qty)}}</td>
+                <td class="text-right">{{render_money(d.lts_storage_rate)}}</td>
+                <td class="text-right">{{render_money(d.lts_storage_charge)}}</td>
+                <td class="text-right">{{render_money(d.total_storage_charge)}}</td>
+            </tr>
+            {% endfor %}
+            <!-- total line -->
+            {% if daily_storage_fees %}
+            <tr class="text-bold">
+                <td colspan="9" class="text-right">Total Storage Charges: </td>
+                {% set total = daily_storage_fees | sum(attribute="total_storage_charge") %}
+                <td class="text-right"> {{ frappe.format_value(total, currency="USD")}} </td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endif %}

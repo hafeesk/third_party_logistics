@@ -30,7 +30,7 @@
             <tr>
                 <td>{{ d.name }}</td>
                 <td>{{ d.posting_date }}</td>
-                <td class="text-right">{{ render_number(d.pallet_outbound_qty_cf) }}</td>
+                <td class="text-right">{{ render_number(d.pallet_outbound_qty_cf) | int }}</td>
                 <td>{{ d.each_pallet_qty_cf }}</td>
                 <td>{{ d.tracking_number_cf }}</td>
                 <td class="text-right">{{ render_money(d.total_outbound_freight_charge) }}</td>

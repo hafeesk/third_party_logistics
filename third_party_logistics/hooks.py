@@ -91,23 +91,13 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"third_party_logistics.tasks.all"
-# 	],
-# 	"daily": [
-# 		"third_party_logistics.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"third_party_logistics.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"third_party_logistics.tasks.weekly"
-# 	]
-# 	"monthly": [
-# 		"third_party_logistics.tasks.monthly"
-# 	]
-# }
+scheduler_events = {
+    "cron": {
+        "5 0 1 * *": [
+            "third_party_logistics.third_party_logistics.billing.billing_controller._make_billing"
+        ]
+    },
+}
 
 # Testing
 # -------

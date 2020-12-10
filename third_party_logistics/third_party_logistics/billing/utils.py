@@ -16,7 +16,13 @@ from erpnext.stock.get_item_details import get_price_list_rate_for
 
 
 def on_validate_item(doc, method):
-    doc.volume_in_cubic_feet_cf = doc.length_in_inch__cf * doc.width_in_inch_cf * doc.height_in_inch_cf / 1728
+    if doc.is_customer_provided_item:
+        if not doc.length_in_inch__cf \
+            or not doc.width_in_inch_cf \
+            or not doc.height_in_inch_cf:
+            frappe.throw("Please set Length, Width, Breadth for Customer Provided Items.")
+        doc.volume_in_cubic_feet_cf = doc.length_in_inch__cf * doc.width_in_inch_cf * doc.height_in_inch_cf / 1728
+
 
 def make_accounting_period(start_date, end_date, company):
     """Creates an accounting period for the selected dates, so no backdated entries"""

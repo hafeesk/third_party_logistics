@@ -4,7 +4,7 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe.utils import getdate, get_first_day, get_last_day, add_days
+from frappe.utils import getdate, get_first_day, get_last_day, add_days, now
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
 from collections import defaultdict
 import json
@@ -23,9 +23,14 @@ from third_party_logistics.third_party_logistics.report.outbound_pallet_loading_
 from third_party_logistics.third_party_logistics.report.miscellaneous_services_charges.miscellaneous_services_charges import get_data as get_miscellaneous_services_charges, get_invoice_items as get_invoice_items_for_misc_charges
 
 
+def _make_billing():
+    from frappe.utils.background_jobs import enqueue
+    enqueue('third_party_logistics.third_party_logistics.billing.billing_controller.make_billing', timeout=10000, queue="long")
+    frappe.log_error("_make_billing called by scheduler %s" % now())
+
 @frappe.whitelist()
 def make_billing(from_date=None, to_date=None):
-
+    frappe.log_error("make_billing called by scheduler %s" % now())
     filters = get_filters(from_date, to_date)
     from_date = filters["from_date"]
     to_date = filters["to_date"]
@@ -264,6 +269,10 @@ def make_miscellaneous_charges_for_service_notes(from_date, to_date):
 def get_billing_details_pdf(filters):
     context = dict(filters=filters, base_url=frappe.utils.get_site_url(frappe.local.site))
     if not filters.get("report_name"):
+        # invoked in auto invoice scheduled job
+        filters["grouped"] = 1
+        context["daily_storage_fees_grouped"] = get_daily_storage_fees(filters)
+        filters["grouped"] = 0
         context["receiving_charges"] = get_receiving_charges(filters)
         context["pick_and_pack_charges"] = get_pick_and_pack_charges(filters)
         context["outbound_pallet_loading_charges"] = get_outbound_pallet_loading_charges(filters)
@@ -271,6 +280,7 @@ def get_billing_details_pdf(filters):
         context["daily_storage_fees"] = get_daily_storage_fees(filters)
         context["miscellaneous_service_charges"] = get_miscellaneous_services_charges(filters)
     else:
+        # invoked from report
         _map = dict({
                 "Receiving Charges": ("receiving_charges", get_receiving_charges),
                 "Pick and Pack Charges": ("pick_and_pack_charges", get_pick_and_pack_charges),

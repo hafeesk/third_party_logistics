@@ -86,22 +86,6 @@ def get_data():
       "items": [
         {
           "type": "report",
-          "name": "Storage Billing Details",
-          "label": "Storage Billing Details",
-          "is_query_report": True,
-          "doctype": "Storage Charge Log CT",
-          "description": "Storage Charge Log CT"
-        },
-        {
-          "type": "report",
-          "name": "Stock Balance",
-          "label": "Stock Balance",
-          "is_query_report": True,
-          "doctype": "Stock Entry",
-          "description": "Stock Balance"
-        },
-        {
-          "type": "report",
           "name": "Receiving Charges",
           "label": "Receiving Charges",
           "is_query_report": True,
@@ -162,9 +146,23 @@ def get_data():
           "doctype": "Service Note CT",
           "description": "Miscellaneous Services Charges",
           "route": "#query-report/Miscellaneous Services Charges"
-        }
-
-
+        },
+        {
+          "type": "report",
+          "is_query_report": True,
+          "name": "Stock Ledger",
+          "doctype": "Stock Ledger Entry",
+          "onboard": 1,
+          "dependencies": ["Item"],
+        },
+        {
+          "type": "report",
+          "name": "Stock Balance",
+          "label": "Stock Balance",
+          "is_query_report": True,
+          "doctype": "Stock Entry",
+          "description": "Stock Balance"
+        },
       ]
     },
     {
