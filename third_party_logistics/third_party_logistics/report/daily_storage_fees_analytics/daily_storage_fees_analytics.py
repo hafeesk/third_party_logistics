@@ -180,9 +180,22 @@ def get_invoice_items(filters):
             # Regular Storage Calculation
             regular_storage_charge_item = d.daily_storage_charge_cf or storage_charge_items.default_daily_storage_per_cubic_feet_charge
             regular_storage_qty = d.bal_qty
+
             # LTSF Calculation
             lts_charge_item = storage_charge_items.default_long_term_storage_fees_for_daily_cycle
             lts_qty = 0 if not d.bal_qty > d.in_qty else (d.bal_qty - d.in_qty)
+
+            # deduct already billed qty logged in 'Storage Charge Log CT'
+            for scl in frappe.db.sql("""
+                select
+                    customer, item, inventory, lts_qty 
+                from 
+                    `tabStorage Charge Log CT`
+                where
+                    customer = %(customer)s and date=%(to_date)s
+            """, filters, as_dict=True):
+                regular_storage_qty = max(regular_storage_qty - scl.inventory, 0)
+                lts_qty = max(lts_qty - scl.lts_qty, 0)
 
             if regular_storage_qty:
                 invoice_items.append({

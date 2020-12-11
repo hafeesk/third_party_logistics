@@ -349,7 +349,7 @@ def make_storage_charge_log_ct(doc, method):
         "total_cft_per_item": d["item_volume"] * d["qty"],
         "rate_per_volume": d["storage_charge_per_cubic_feet"],
         "storage_charge": d["regular_storage_charge"],
-        "lts_qty": d["lts_storage_rate"],
+        "lts_qty": d["lts_qty"],
         "lts_rate": d["lts_storage_rate"],
         "lts_amount": d["lts_storage_charge"],
         "total_storage_amount": d["total_storage_charge"]
@@ -369,7 +369,7 @@ def make_storage_charge_log_ct(doc, method):
         new_doc.update(_get_mapped_doc(d))
         new_doc.update({
             "billing_cycle": "Daily",
-            "date": doc.billing_to_date_cf,
+            "date": d["date"],
         })
         new_doc.insert(ignore_permissions=True)
 
