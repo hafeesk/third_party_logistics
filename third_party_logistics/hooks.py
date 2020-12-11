@@ -96,10 +96,8 @@ scheduler_events = {
     "cron": {
         "5 0 1 * *": [
             "third_party_logistics.third_party_logistics.billing.billing_controller._make_billing"
-        ],
-        "*/1 * * * *": ["third_party_logistics.third_party_logistics.billing.utils.daily_scheduler"],
+        ]
     },
-    "all": ["third_party_logistics.third_party_logistics.billing.utils.daily_scheduler"],
     "daily": ["third_party_logistics.third_party_logistics.billing.utils.daily_scheduler"]
 }
 
