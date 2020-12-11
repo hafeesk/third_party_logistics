@@ -170,3 +170,9 @@ def uninvoice(from_date, to_date, customer=None):
     """.format(where_clause=where_clause), filters)
 
     frappe.db.commit()
+
+
+def daily_scheduler():
+    from frappe.utils.background_jobs import enqueue
+    frappe.log_error("Daily scheduler %s" % frappe.utils.now())
+    frappe.db.commit()

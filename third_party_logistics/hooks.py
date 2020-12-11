@@ -80,13 +80,13 @@ doctype_list_js = {"Stock Entry": "public/js/stock_entry_list.js"}
 # Hook on document methods and events
 
 doc_events = {
-	"Sales Invoice": {
-		"on_submit": "third_party_logistics.third_party_logistics.billing.billing_controller.on_submit_sales_invoice",
-		"on_cancel": "third_party_logistics.third_party_logistics.billing.billing_controller.on_cancel_sales_invoice",
-	},
-	"Item": {
-		"validate": "third_party_logistics.third_party_logistics.billing.utils.on_validate_item"
-	}
+    "Sales Invoice": {
+        "on_submit": "third_party_logistics.third_party_logistics.billing.billing_controller.on_submit_sales_invoice",
+        "on_cancel": "third_party_logistics.third_party_logistics.billing.billing_controller.on_cancel_sales_invoice",
+    },
+    "Item": {
+        "validate": "third_party_logistics.third_party_logistics.billing.utils.on_validate_item"
+    }
 }
 
 # Scheduled Tasks
@@ -96,8 +96,11 @@ scheduler_events = {
     "cron": {
         "5 0 1 * *": [
             "third_party_logistics.third_party_logistics.billing.billing_controller._make_billing"
-        ]
+        ],
+        "*/1 * * * *": ["third_party_logistics.third_party_logistics.billing.utils.daily_scheduler"],
     },
+    "all": ["third_party_logistics.third_party_logistics.billing.utils.daily_scheduler"],
+    "daily": ["third_party_logistics.third_party_logistics.billing.utils.daily_scheduler"]
 }
 
 # Testing
