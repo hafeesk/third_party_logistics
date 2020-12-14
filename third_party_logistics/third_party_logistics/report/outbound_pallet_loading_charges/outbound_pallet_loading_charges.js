@@ -15,14 +15,14 @@ frappe.query_reports["Outbound Pallet Loading Charges"] = {
       fieldname: "from_date",
       label: __("Date"),
       fieldtype: "Date",
-      default: frappe.get_first_of_month(-2),
+      default: frappe.get_first_of_month(-1),
       reqd: 1,
     },
     {
       fieldname: "to_date",
       label: __("Date"),
       fieldtype: "Date",
-      default: frappe.get_last_of_month(-2),
+      default: frappe.get_last_of_month(-1),
       reqd: 1,
     },
     {

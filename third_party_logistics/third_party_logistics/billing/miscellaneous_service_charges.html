@@ -34,7 +34,7 @@
                 <td>{{ d.posting_date }}</td>
                 <td>{{ d.item_code }}</td>
                 <td>{{ d.for_item }}</td>
-                <td class="text-right">{{ render_number(d.qty) }}</td>
+                <td class="text-right">{{ d.qty | int }}</td>
                 <td class="text-right">{{ render_money(d.rate) }}</td>
                 <td class="text-right">{{ render_money(d.amount) }}</td>
             </tr>

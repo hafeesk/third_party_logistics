@@ -38,11 +38,11 @@
             <tr>
                 <td>{{d.item_group}}</td>
                 <td>{{d.item_name}}</td>
-                <td class="text-right">{{ render_number(d.qty)}}</td>
+                <td class="text-right">{{ d.qty | int }}</td>
                 <td class="text-right">{{render_number(d.item_volume)}}</td>
                 <td class="text-right">{{render_money(d.storage_charge_per_cubic_feet)}}</td>
                 <td class="text-right">{{render_money(d.regular_storage_charge)}}</td>
-                <td class="text-right">{{render_number(d.lts_qty)}}</td>
+                <td class="text-right">{{ d.lts_qty | int }}</td>
                 <td class="text-right">{{render_money(d.lts_storage_rate)}}</td>
                 <td class="text-right">{{render_money(d.lts_storage_charge)}}</td>
                 <td class="text-right">{{render_money(d.total_storage_charge)}}</td>

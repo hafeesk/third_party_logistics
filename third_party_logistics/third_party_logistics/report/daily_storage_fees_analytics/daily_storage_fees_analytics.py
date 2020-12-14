@@ -38,7 +38,7 @@ def get_columns(filters):
                 dict(label=_("Item Group"), fieldname="item_group", fieldtype="Data", width=120),
                 dict(label=_("Item"), fieldname="item_name", fieldtype="Link", options="Item", width=120),
                 dict(label=_("Date"), fieldname="date", fieldtype="Date", width=120),
-                dict(label=_("Inventory"), fieldname="qty", fieldtype="Float", width=120),
+                dict(label=_("Inventory"), fieldname="qty", fieldtype="Int", width=120),
                 dict(label=_("Item Volume"), fieldname="item_volume", fieldtype="Float", width=120),
                 dict(label=_("Charge per Cubic Feet"), fieldname="storage_charge_per_cubic_feet", fieldtype="Currency", width=120),
                 dict(label=_("Regular Storage Charge"), fieldname="regular_storage_charge", fieldtype="Currency", width=120),

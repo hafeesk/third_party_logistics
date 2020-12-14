@@ -37,7 +37,7 @@
                 <td>{{ d.name }}</td>
                 <td>{{ d.posting_date }}</td>
                 <td>{{ d.received_as_cf }}</td>
-                <td class="text-right">{{ render_number(d.pallet_lc_qty)  }}</td>
+                <td class="text-right">{{ d.pallet_lc_qty | int  }}</td>
                 <td class="text-right">{{ render_money(d.rate_per_pallet_lc)  }}</td>
                 <td class="text-right">{{ render_money(d.amount_for_pallet_lc)  }}</td>
                 <td>{{ d.container_type_cf or "" }}</td>

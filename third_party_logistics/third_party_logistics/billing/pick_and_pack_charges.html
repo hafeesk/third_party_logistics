@@ -31,7 +31,7 @@
                 <td>{{ d.name }}</td>
                 <td>{{ d.transaction_date }}</td>
                 <td class="text-right">{{ render_money(d.per_order_charge) or "" }}</td>
-                <td class="text-right">{{ render_number(d.total_item_qty) }}</td>
+                <td class="text-right">{{ d.total_item_qty | int }}</td>
                 <td class="text-right">{{ render_money(d.per_item_charge) }}</td>
                 <td class="text-right">{{ render_money(d.total_pick_and_pack_charge) }}</td>
             </tr>
