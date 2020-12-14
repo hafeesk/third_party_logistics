@@ -82,7 +82,7 @@ def get_data(filters):
             customer = details.get("customer")
 
             # Regular Storage Calculation
-            storage_charge_per_cubic_feet = get_item_rate(customer, d.daily_storage_charge_cf or storage_charge_items.default_daily_storage_per_cubic_feet_charge, item_rates)
+            storage_charge_per_cubic_feet = get_item_rate(customer, details.daily_storage_charge_cf or storage_charge_items.default_daily_storage_per_cubic_feet_charge, item_rates)
             regular_storage_charge = storage_charge_per_cubic_feet * d.bal_qty * details.volume_in_cubic_feet_cf
 
             # LTSF Calculation
@@ -178,7 +178,7 @@ def get_invoice_items(filters):
                 continue
 
             # Regular Storage Calculation
-            regular_storage_charge_item = d.daily_storage_charge_cf or storage_charge_items.default_daily_storage_per_cubic_feet_charge
+            regular_storage_charge_item = details.daily_storage_charge_cf or storage_charge_items.default_daily_storage_per_cubic_feet_charge
             regular_storage_qty = d.bal_qty
 
             # LTSF Calculation
